@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Amisha Sharma — Portfolio (San Andreas Edition)
+
+A GTA San Andreas–themed portfolio website for Amisha Sharma, IT Project Coordinator. Grove Street aesthetics, mission-passed work history, player-stat skill bars, and a synthwave Three.js sunset over Los Santos.
+
+## Tech Stack
+
+- **Next.js 16** (App Router, Turbopack) + **TypeScript**
+- **Three.js** via **@react-three/fiber**, **@react-three/drei**, and **@react-three/postprocessing** — procedural hero scene (striped sun shader, endless grid, palm silhouettes, skyline, bloom/noise/vignette)
+- **GSAP + ScrollTrigger** — scroll-driven reveals, mission-passed stamps, parallax hero
+- **Lenis** — smooth scrolling, synced with GSAP's ticker
+- **Tailwind CSS v4** — layout and theme tokens
+- **styled-components** — interactive UI primitives (GTA menu buttons, stat bars) with SSR registry
+- **TanStack Query** — resume data fetched from `/api/resume` with instant local placeholder
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  app/
+    api/resume/route.ts   # Resume data as JSON API
+    layout.tsx            # Fonts (Pricedown, Oswald, Inter) + providers
+    providers.tsx         # TanStack Query + Lenis smooth scroll + styled-components registry
+    page.tsx              # Section composition
+  components/
+    three/HeroScene.tsx   # R3F synthwave San Andreas scene
+    sections/             # Hero, About, Missions, Projects, Skills, Education, Contact
+    ui/                   # GtaButton, StatBar, Reveal, SectionTitle
+  hooks/useResume.ts      # TanStack Query hook
+  lib/
+    resume.ts             # Typed resume data (source of truth)
+    registry.tsx          # styled-components SSR registry
+public/
+  Amisha_Sharma_CV.pdf    # Downloadable CV
+  fonts/pricedown.woff    # GTA display font
+```
 
-## Learn More
+## Updating Content
 
-To learn more about Next.js, take a look at the following resources:
+All resume content lives in `src/lib/resume.ts`. Replace `public/Amisha_Sharma_CV.pdf` to update the downloadable CV.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm build
+pnpm start
+```
