@@ -1,0 +1,79 @@
+/* Reduced-motion overrides */
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay,
+  .blink,
+  .marquee-track {
+    animation: none !important;
+  }
+
+  .game-hud-radar-spin {
+    animation: none !important;
+  }
+
+  .page-click-burst,
+  .page-click-ring,
+  .page-click-crosshair,
+  .page-click-star {
+    animation: none !important;
+  }
+
+  .mission-overlay,
+  .mission-overlay-exit,
+  .mission-overlay-content,
+  .pause-menu,
+  .game-hud-zone-toast {
+    animation: none !important;
+  }
+
+  .gsap-reveal,
+  .gsap-reveal-left,
+  .gsap-reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High-contrast preference: lift muted text, solidify translucent panels, drop decorative dimming */
+@media (prefers-contrast: more) {
+  :root {
+    --text-muted: rgba(232, 213, 160, 0.92);
+    --text-subtle: rgba(232, 213, 160, 0.85);
+  }
+
+  .game-hud-panel,
+  .radio-hud-toggle,
+  .radio-hud-panel,
+  .game-hud-zone-toast,
+  .pause-menu,
+  .contact-form,
+  .loadout-slot,
+  .availability-badge {
+    background: #0c0913;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: rgba(232, 213, 160, 0.6);
+  }
+
+  .grain-overlay,
+  .loading-splash-scrim,
+  .hero-scene-vignette {
+    display: none;
+  }
+
+  .section-plain-label,
+  .loadout-use,
+  .impact-chip-label {
+    color: var(--color-sand);
+  }
+}

@@ -1,0 +1,75 @@
+/* Mission Passed overlay */
+
+/* ── Mission Overlay ── */
+.mission-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-game-ui);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 12, 8, 0.88);
+  animation: mission-fade-in 0.18s ease forwards;
+  cursor: var(--cursor-pointer) 12 12, pointer;
+}
+
+.mission-overlay-exit {
+  animation: mission-fade-out 0.15s ease forwards;
+  pointer-events: none;
+}
+
+.mission-overlay-reduced {
+  animation: none;
+}
+
+.mission-overlay-reduced.mission-overlay-exit {
+  animation: none;
+  opacity: 0;
+  transition: opacity 80ms ease;
+}
+
+@keyframes mission-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mission-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.mission-overlay-scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(84, 185, 72, 0.03) 2px,
+    rgba(84, 185, 72, 0.03) 4px
+  );
+}
+
+.mission-overlay-content {
+  text-align: center;
+  animation: mission-pop 0.32s cubic-bezier(0.22, 1.1, 0.36, 1) forwards;
+}
+
+.mission-overlay-exit .mission-overlay-content {
+  animation: mission-pop-out 0.15s ease forwards;
+}
+
+.mission-overlay-reduced .mission-overlay-content {
+  animation: none;
+}
+
+@keyframes mission-pop {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes mission-pop-out {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.04); }
+}

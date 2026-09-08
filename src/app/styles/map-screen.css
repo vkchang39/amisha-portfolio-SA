@@ -1,0 +1,106 @@
+/* Map screen */
+
+/* ── Map Screen ── */
+.map-screen-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-game-ui);
+  background: rgba(5, 8, 18, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.map-screen {
+  width: min(36rem, 100%);
+  max-height: 90vh;
+  padding: 1.25rem;
+  background: #1a2838;
+  border: 2px solid rgba(138, 168, 195, 0.45);
+  overflow: auto;
+}
+
+.map-screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.map-screen-close {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 1.25rem;
+  color: var(--color-sand);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.map-screen-canvas {
+  position: absolute;
+  inset: 0;
+  transform-origin: center center;
+}
+
+.map-blip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 2;
+}
+
+.map-blip-icon {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.map-blip-mission .map-blip-icon {
+  background: #f2d030;
+  box-shadow: 0 0 8px #f2d030;
+}
+
+.map-blip-save .map-blip-icon {
+  background: var(--color-money);
+  box-shadow: 0 0 8px var(--color-money);
+}
+
+.map-blip-skill .map-blip-icon,
+.map-blip-property .map-blip-icon {
+  background: var(--color-hud);
+  box-shadow: 0 0 8px var(--color-hud);
+}
+
+.map-blip-active .map-blip-icon {
+  transform: scale(1.3);
+}
+
+.map-blip-label {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-sand);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.map-blip:hover .map-blip-label,
+.map-blip:focus-visible .map-blip-label {
+  opacity: 1;
+}
+
+.map-blip:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 4px;
+}

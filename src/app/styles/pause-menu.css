@@ -1,0 +1,113 @@
+/* Pause menu */
+
+/* ── Pause Menu ── */
+.pause-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-game-ui);
+  background: rgba(5, 8, 18, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pause-menu {
+  width: min(22rem, 100%);
+  padding: 2rem 1.75rem;
+  background: linear-gradient(180deg, rgba(26, 40, 64, 0.96) 0%, rgba(15, 24, 40, 0.98) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(138, 168, 195, 0.45);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  animation: pause-in 0.2s ease;
+}
+
+.pause-menu-reduced {
+  animation: none;
+}
+
+@keyframes pause-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.pause-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pause-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  color: #fff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    transform var(--transition-fast),
+    filter var(--transition-fast);
+}
+
+.pause-menu-item:hover {
+  filter: brightness(1.08);
+  transform: translateX(2px);
+}
+
+.pause-menu-item-active {
+  background: linear-gradient(90deg, var(--color-money) 0%, transparent 100%);
+  color: #07120a;
+  filter: brightness(1.05);
+}
+
+.pause-menu-arrow {
+  font-weight: 700;
+  min-width: 1rem;
+}
+
+.pause-menu-settings {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(138, 168, 195, 0.25);
+}
+
+.pause-menu-settings-btn {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-sand);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(232, 213, 160, 0.25);
+  cursor: pointer;
+}
+
+.pause-menu-settings-btn:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.pause-menu-hint kbd {
+  display: inline-block;
+  padding: 0 0.35em;
+  margin: 0 0.1em;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--color-sand, #e8d5a0);
+  border: 1px solid rgba(232, 213, 160, 0.4);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.35);
+}

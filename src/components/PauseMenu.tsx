@@ -5,6 +5,7 @@ import { useAppReady } from "@/context/AppReadyContext";
 import { useGameUi } from "@/context/GameUiContext";
 import { useGameAudio } from "@/hooks/useGameAudio";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { useResume } from "@/hooks/useResume";
 
 const MENU_ITEMS = [
@@ -21,6 +22,7 @@ const BRIEF_BULLETS = [
   "Delivered CERT-IN aligned DMS platform and mobile apps for high-growth brands.",
 ];
 
+/** Escape toggles the pause menu. Letter hotkeys and cheat codes live in GlobalHotkeys. */
 export function PauseMenuHotkey() {
   const { isAppReady } = useAppReady();
   const { pauseOpen, openPause, closePause, mapOpen } = useGameUi();
@@ -32,14 +34,11 @@ export function PauseMenuHotkey() {
       if (e.key !== "Escape") return;
       const target = e.target as HTMLElement;
       if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
-      if (mapOpen) return;
+      if (mapOpen) return; // MapScreen owns Escape while open
 
       e.preventDefault();
-      if (pauseOpen) {
-        closePause();
-      } else {
-        openPause();
-      }
+      if (pauseOpen) closePause();
+      else openPause();
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -58,6 +57,8 @@ function PauseMenuPanel() {
     toggleMute,
     skipAnimations,
     toggleSkipAnimations,
+    plainLabels,
+    togglePlainLabels,
   } = useGameUi();
   const { play } = useGameAudio();
   const { cinematicEnabled, reducedMotion } = useCinematicMotion();
@@ -100,11 +101,12 @@ function PauseMenuPanel() {
 
   useEffect(() => {
     previousFocus.current = document.activeElement as HTMLElement;
-    menuRef.current?.focus();
     return () => {
       previousFocus.current?.focus();
     };
   }, []);
+
+  useFocusTrap(menuRef, true);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -127,6 +129,9 @@ function PauseMenuPanel() {
           play("menuSelect");
         } else if (target.dataset.setting === "animations") {
           toggleSkipAnimations();
+          play("menuSelect");
+        } else if (target.dataset.setting === "labels") {
+          togglePlainLabels();
           play("menuSelect");
         }
         return;
@@ -157,6 +162,7 @@ function PauseMenuPanel() {
     handleAction,
     toggleMute,
     toggleSkipAnimations,
+    togglePlainLabels,
     play,
     closePause,
   ]);
@@ -231,11 +237,22 @@ function PauseMenuPanel() {
 
         {settingsOpen && (
           <div className="pause-menu-settings">
-            <p className="meta-label mb-3 tracking-[0.14em]">Audio &amp; Motion</p>
+            <p className="meta-label mb-3 tracking-[0.14em]">Display, Audio &amp; Motion</p>
+            <button
+              type="button"
+              data-setting="labels"
+              className="pause-menu-settings-btn"
+              onClick={() => {
+                togglePlainLabels();
+                play("menuSelect");
+              }}
+            >
+              Plain section labels: {plainLabels ? "On" : "Off"}
+            </button>
             <button
               type="button"
               data-setting="sound"
-              className="pause-menu-settings-btn"
+              className="pause-menu-settings-btn mt-2"
               onClick={() => {
                 toggleMute();
                 play("menuSelect");
@@ -271,6 +288,9 @@ function PauseMenuPanel() {
 
         <p className="pause-menu-hint meta-subtle text-xs mt-6 tracking-[0.12em]">
           ↑↓ Navigate · Enter Select · Esc Resume
+        </p>
+        <p className="pause-menu-hint meta-subtle text-xs mt-1 tracking-[0.12em]">
+          Anywhere: <kbd>Esc</kbd> Pause · <kbd>M</kbd> Map · <kbd>R</kbd> Radio
         </p>
       </div>
     </div>

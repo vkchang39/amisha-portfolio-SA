@@ -83,7 +83,7 @@ function RadioHudPanel({ stationIndex }: { stationIndex: number }) {
         type="button"
         className="radio-hud-toggle"
         aria-expanded={radioExpanded}
-        aria-label={radioExpanded ? "Collapse radio" : "Expand radio"}
+        aria-label={`${station.name} — ${radioExpanded ? "collapse" : "expand"} radio`}
         onClick={() => setRadioExpanded(!radioExpanded)}
       >
         <RadioIcon />
@@ -93,6 +93,7 @@ function RadioHudPanel({ stationIndex }: { stationIndex: number }) {
       {radioExpanded && (
         <div className="radio-hud-panel">
           <p className="meta-label text-xs tracking-[0.14em]">{station.tagline}</p>
+          <p className="radio-hud-fx-note">UI FX only — no live stream</p>
           <RadioWaveform
             stationIndex={stationIndex}
             animated={cinematicEnabled}

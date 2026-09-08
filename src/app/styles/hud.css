@@ -1,0 +1,334 @@
+/* Game HUD (money, stars, bars, radar, zone toast) */
+
+/* ── Game HUD ── */
+.game-hud-panel {
+  position: absolute;
+  top: 5.5rem;
+  right: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  background: rgba(12, 9, 19, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(138, 168, 195, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  min-width: 9rem;
+}
+
+@media (min-width: 768px) {
+  .game-hud-panel {
+    top: 5.75rem;
+    right: 1.25rem;
+    min-width: 10.5rem;
+  }
+}
+
+.game-hud-money {
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-money);
+  letter-spacing: 0.06em;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.85);
+}
+
+.game-hud-stars {
+  margin-top: 0.35rem;
+}
+
+.game-hud-star-active {
+  animation: star-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes star-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(0.92); }
+}
+
+.game-hud-bar-label {
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.65rem;
+  color: var(--color-hud);
+  width: 1.1rem;
+}
+
+.game-hud-segment {
+  display: block;
+  width: 0.55rem;
+  height: 0.45rem;
+}
+
+.game-hud-hp {
+  background: var(--color-money);
+}
+
+.game-hud-ar {
+  background: var(--color-hud);
+}
+
+.game-hud-segment-empty {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.game-hud-weapon {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-sand);
+}
+
+.game-hud-weapon-icon {
+  color: var(--color-sunset);
+}
+
+.game-hud-respect {
+  margin-top: 0.35rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
+
+.game-hud-radar-wrap {
+  position: absolute;
+  bottom: 1rem;
+  left: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .game-hud-radar-wrap {
+    bottom: 1.25rem;
+    left: 1.25rem;
+  }
+}
+
+.game-hud-radar {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+  border: 3px solid rgba(138, 168, 195, 0.55);
+  background: radial-gradient(circle, rgba(26, 40, 56, 0.95) 0%, rgba(12, 9, 19, 0.98) 100%);
+  overflow: hidden;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+@media (min-width: 768px) {
+  .game-hud-radar {
+    width: 7rem;
+    height: 7rem;
+  }
+}
+
+.game-hud-radar-spin .game-hud-radar-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(84, 185, 72, 0.15) 40deg, transparent 80deg);
+  animation: radar-sweep 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-sweep {
+  to { transform: rotate(360deg); }
+}
+
+.game-hud-radar-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.game-hud-blip,
+.game-hud-player {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.game-hud-blip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.game-hud-blip-mission {
+  background: #f2d030;
+  box-shadow: 0 0 4px #f2d030;
+}
+
+.game-hud-blip-save {
+  background: var(--color-money);
+  box-shadow: 0 0 4px var(--color-money);
+}
+
+.game-hud-blip-skill,
+.game-hud-blip-property {
+  background: var(--color-hud);
+  box-shadow: 0 0 4px var(--color-hud);
+}
+
+.game-hud-blip-active {
+  transform: translate(-50%, -50%) scale(1.4);
+}
+
+.game-hud-player {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border: 2px solid var(--color-blood);
+  border-radius: 2px;
+  z-index: 2;
+}
+
+.game-hud-radar-label {
+  margin-top: 0.25rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-align: center;
+  color: var(--color-hud);
+}
+
+.game-hud-zone-toast {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  z-index: var(--z-hud);
+  transform: translateX(-50%);
+  padding: 0.5rem 1.1rem 0.5rem 0.95rem;
+  background: rgba(12, 9, 19, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 213, 160, 0.22);
+  border-left: 3px solid var(--color-money);
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-sand);
+  animation: zone-toast 2.4s ease forwards;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes zone-toast {
+  0% { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  12% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Money ticker — brief "+$" pop on new district */
+.game-hud-ticker {
+  position: absolute;
+  right: 0;
+  top: -1.1rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-money);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+  animation: hud-ticker 0.9s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes hud-ticker {
+  0% { opacity: 0; transform: translateY(6px); }
+  20% { opacity: 1; transform: translateY(0); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+
+/* Persistent CV chip — bottom center-right, above radio on small screens */
+.game-hud-cv {
+  position: fixed;
+  z-index: var(--z-hud);
+  right: 0.75rem;
+  bottom: 4.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0.4rem 0.8rem;
+  font-family: var(--font-pricedown), Impact, sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  color: #0c0913;
+  background: var(--color-money);
+  border: 2px solid rgba(0, 0, 0, 0.6);
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.game-hud-cv:hover {
+  background: #6ad15a;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7);
+}
+
+.game-hud-cv:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7);
+}
+
+.game-hud-cv:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 3px;
+}
+
+@media (min-width: 768px) {
+  .game-hud-cv {
+    right: 1.25rem;
+    bottom: 4.75rem;
+    font-size: 1.15rem;
+  }
+}
+
+/* Session clock — sits above the money counter like the SA HUD */
+.game-hud-clock {
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-sand);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.85);
+  margin-bottom: 0.1rem;
+}
+
+/* Cheat-code toast — centered, brief */
+.cheat-toast {
+  position: fixed;
+  top: 5rem;
+  left: 50%;
+  z-index: var(--z-game-ui);
+  transform: translateX(-50%);
+  padding: 0.45rem 1rem;
+  font-family: var(--font-pricedown), Impact, sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  color: var(--color-money);
+  background: rgba(12, 9, 19, 0.9);
+  border: 1px solid rgba(84, 185, 72, 0.5);
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+  animation: cheat-toast-in 0.25s ease-out both;
+  white-space: nowrap;
+  max-width: calc(100vw - 2rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes cheat-toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.96); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cheat-toast { animation: none; }
+}

@@ -7,6 +7,7 @@ import { useGameUi } from "@/context/GameUiContext";
 import { MAP_LOCATIONS } from "@/lib/mapLocations";
 import { withBasePath } from "@/lib/basePath";
 import { useGameAudio } from "@/hooks/useGameAudio";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 2.5;
@@ -168,6 +169,8 @@ export function MapScreen() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isAppReady, mapOpen, closeMap]);
 
+  useFocusTrap(dialogRef, isAppReady && mapOpen);
+
   if (!isAppReady || !mapOpen) return null;
 
   return (
@@ -268,6 +271,7 @@ export function MapScreen() {
                     transform: `translate(-50%, -50%) scale(${1 / zoom})`,
                   }}
                   aria-label={`Go to ${loc.label}`}
+                  onMouseEnter={() => play("menuMove")}
                   onClick={() => {
                     play("menuSelect");
                     navigateToSection(loc.sectionId);

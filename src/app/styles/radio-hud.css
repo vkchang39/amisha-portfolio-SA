@@ -1,0 +1,102 @@
+/* Radio HUD */
+
+/* ── Radio HUD ── */
+.radio-hud {
+  position: fixed;
+  bottom: 1rem;
+  right: 0.75rem;
+  z-index: var(--z-hud);
+  max-width: calc(100% - 7rem);
+}
+
+@media (min-width: 768px) {
+  .radio-hud {
+    bottom: 1.25rem;
+    right: 1.25rem;
+    max-width: 16rem;
+  }
+}
+
+.radio-hud-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  min-height: 44px;
+  background: rgba(12, 9, 19, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(138, 168, 195, 0.4);
+  color: var(--color-sand);
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: var(--cursor-pointer) 12 12, pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.radio-hud-toggle:hover {
+  border-color: rgba(84, 185, 72, 0.5);
+  color: var(--color-money);
+}
+
+.radio-hud-icon-svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  color: var(--color-hud);
+}
+
+.radio-hud-toggle:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.radio-hud-panel {
+  margin-top: 0.35rem;
+  padding: 0.65rem 0.75rem;
+  background: rgba(12, 9, 19, 0.92);
+  border: 1px solid rgba(138, 168, 195, 0.35);
+}
+
+.radio-hud-fx-note {
+  margin: 0.2rem 0 0.45rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(138, 168, 195, 0.85);
+}
+
+.radio-hud-track {
+  margin-top: 0.35rem;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.7rem;
+  color: var(--color-money);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.radio-hud-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.radio-hud-btn {
+  min-width: 44px;
+  min-height: 36px;
+  font-size: 0.65rem;
+  color: var(--color-sand);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(232, 213, 160, 0.2);
+  cursor: pointer;
+}
+
+.radio-hud-btn:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+}

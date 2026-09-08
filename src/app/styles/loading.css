@@ -1,0 +1,111 @@
+/* Loading screen */
+
+/* ── Loading screen enhancements ── */
+.loading-screen {
+  isolation: isolate;
+}
+
+.loading-splash {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #000;
+  opacity: 1;
+}
+
+.loading-splash-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% 48%, rgba(0, 0, 0, 0.55) 0%, transparent 70%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, transparent 38%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, transparent 28%);
+}
+
+.loading-percent {
+  font-family: var(--font-pricedown), Impact, sans-serif;
+  font-size: 1.5rem;
+  color: var(--color-money);
+  letter-spacing: 0.08em;
+}
+
+.loading-tip {
+  max-width: 22rem;
+  text-align: center;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: var(--text-muted);
+  padding: 0 1rem;
+}
+
+/* Slow SA-style drift on the collage while loading (motion-gated) */
+.loading-splash-animated {
+  animation: loading-drift 6s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes loading-drift {
+  from { transform: scale(1.04) translate(-0.6%, 0.3%); }
+  to { transform: scale(1.09) translate(0.7%, -0.5%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-splash-animated {
+    animation: none;
+  }
+}
+
+/* "Wasted" 404 page */
+.wasted-page {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1.25rem;
+  background: #000;
+  overflow: hidden;
+}
+
+.wasted-page-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(1) contrast(1.1) brightness(0.55);
+  opacity: 0.55;
+}
+
+.wasted-page-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0, 0, 0, 0.6), transparent 70%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent 45%);
+}
+
+.wasted-title {
+  position: relative;
+  font-family: var(--font-pricedown), Impact, sans-serif;
+  font-size: clamp(4rem, 18vw, 10rem);
+  line-height: 0.9;
+  color: #b3262a;
+  text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.9), 0 0 24px rgba(179, 38, 42, 0.5);
+  animation: wasted-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes wasted-in {
+  from { opacity: 0; transform: scale(1.4); letter-spacing: 0.2em; }
+  to { opacity: 1; transform: scale(1); letter-spacing: 0.02em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wasted-title { animation: none; }
+}

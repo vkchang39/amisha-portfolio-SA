@@ -12,6 +12,8 @@ interface RevealProps {
   delay?: number;
   from?: "up" | "left" | "right";
   id?: string;
+  /** Element to render; use "li" inside lists so the DOM stays valid for AT. */
+  as?: "div" | "li";
 }
 
 const revealClass = {
@@ -26,8 +28,9 @@ export function Reveal({
   delay = 0,
   from = "up",
   id,
+  as: Tag = "div",
 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const { cinematicEnabled } = useCinematicMotion();
 
   useGSAP(
@@ -62,12 +65,12 @@ export function Reveal({
   );
 
   return (
-    <div
-      ref={ref}
+    <Tag
+      ref={ref as React.Ref<HTMLDivElement & HTMLLIElement>}
       className={`${revealClass[from]}${className ? ` ${className}` : ""}`}
       id={id}
     >
       {children}
-    </div>
+    </Tag>
   );
 }

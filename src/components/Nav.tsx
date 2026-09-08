@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useGameUi } from "@/context/GameUiContext";
 import { withBasePath } from "@/lib/basePath";
 
 const LINKS = [
@@ -11,12 +12,10 @@ const LINKS = [
   { href: "#contact", label: "Contact", id: "contact" },
 ] as const;
 
-const SECTION_IDS = LINKS.map((link) => link.id);
-
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>("");
+  const { activeSection, navigateToSection } = useGameUi();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -26,31 +25,15 @@ export function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(
-      Boolean
-    ) as HTMLElement[];
-
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        if (visible[0]?.target.id) {
-          setActiveSection(visible[0].target.id);
-        }
-      },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5] }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, []);
-
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  const goTo = useCallback(
+    (sectionId: string) => {
+      navigateToSection(sectionId);
+      closeMenu();
+    },
+    [navigateToSection, closeMenu]
+  );
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -103,7 +86,11 @@ export function Nav() {
         <a
           href="#top"
           className="gta-title-light text-2xl text-sand hover:text-money transition-colors min-h-11 min-w-11 inline-flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
-          aria-label="Amisha Sharma — back to top"
+          aria-label="AS — Amisha Sharma, back to top"
+          onClick={(e) => {
+            e.preventDefault();
+            goTo("top");
+          }}
         >
           AS
         </a>
@@ -111,7 +98,14 @@ export function Nav() {
         <ul className="hidden md:flex items-center gap-6 lg:gap-8">
           {LINKS.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className={linkClass(link.id)}>
+              <a
+                href={link.href}
+                className={linkClass(link.id)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  goTo(link.id);
+                }}
+              >
                 {link.label}
               </a>
             </li>
@@ -171,7 +165,10 @@ export function Nav() {
                 <a
                   href={link.href}
                   className={`${linkClass(link.id)} w-full py-2`}
-                  onClick={closeMenu}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goTo(link.id);
+                  }}
                 >
                   {link.label}
                 </a>

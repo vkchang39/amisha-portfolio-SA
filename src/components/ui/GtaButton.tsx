@@ -47,8 +47,9 @@ export const GtaButton = styled.a<{ $variant?: "money" | "blood" | "sand" }>`
           box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
           &:hover {
             background: #6fdc60;
-            transform: translate(-1px, -1px);
-            box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.6);
+            transform: translate(-2px, -2px) scale(1.02);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.6);
+            filter: brightness(1.06);
           }
         `;
       case "blood":
@@ -58,8 +59,9 @@ export const GtaButton = styled.a<{ $variant?: "money" | "blood" | "sand" }>`
           box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.6);
           &:hover {
             background: #d63a3f;
-            transform: translate(-1px, -1px);
-            box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.6);
+            transform: translate(-2px, -2px) scale(1.02);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.6);
+            filter: brightness(1.06);
           }
         `;
       case "sand":
@@ -71,8 +73,9 @@ export const GtaButton = styled.a<{ $variant?: "money" | "blood" | "sand" }>`
           &:hover {
             background: var(--color-sand);
             color: var(--color-night);
-            transform: translate(-1px, -1px);
-            box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.6);
+            transform: translate(-2px, -2px) scale(1.02);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.6);
+            filter: brightness(1.04);
           }
         `;
       default: {
