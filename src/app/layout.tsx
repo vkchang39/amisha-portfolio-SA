@@ -29,9 +29,10 @@ const SITE_TITLE =
   "Amisha Sharma — IT Project Coordinator | San Andreas Edition";
 const SITE_DESCRIPTION =
   "Portfolio of Amisha Sharma, IT Project Coordinator. Grove Street. Home. Missions delivered, respect earned.";
+const OG_IMAGE = `${SITE_URL}/images/og-share.jpg?v=2`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(`${SITE_URL}/`),
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   applicationName: "Amisha Sharma Portfolio",
@@ -43,6 +44,10 @@ export const metadata: Metadata = {
     "project management",
     "GTA San Andreas",
   ],
+  robots: {
+    index: true,
+    follow: true,
+  },
   alternates: {
     canonical: "/",
   },
@@ -55,9 +60,11 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: "/images/og-share.jpg",
-        width: 1280,
-        height: 720,
+        url: OG_IMAGE,
+        secureUrl: OG_IMAGE,
+        type: "image/jpeg",
+        width: 1200,
+        height: 630,
         alt: "Amisha Sharma — IT Project Coordinator, San Andreas Edition",
       },
     ],
@@ -66,7 +73,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: ["/images/og-share.jpg"],
+    images: [OG_IMAGE],
   },
 };
 
