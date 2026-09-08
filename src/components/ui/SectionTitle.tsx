@@ -34,9 +34,7 @@ export function SectionTitle({
         {title}
       </SprayTitleReveal>
       {plain && plainLabels && (
-        <p className="section-plain-label" aria-label={`Section: ${plain}`}>
-          {plain}
-        </p>
+        <p className="section-plain-label">{plain}</p>
       )}
     </Reveal>
   );

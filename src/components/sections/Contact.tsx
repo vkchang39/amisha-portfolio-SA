@@ -128,29 +128,35 @@ export function Contact({ year }: { year: number }) {
             id="contact-email-cta"
             href={`mailto:${data.email}`}
             $variant="money"
-            aria-label={`Email Amisha Sharma at ${data.email}`}
+            aria-label={`send a message — email ${data.email}`}
           >
             send a message
-            <span className="cta-hint">Email Amisha</span>
+            <span className="cta-hint" aria-hidden>
+              Email Amisha
+            </span>
           </GtaButtonSound>
           <GtaButtonSound
             href={withBasePath(data.cvUrl)}
             download
             $variant="blood"
-            aria-label="Download Amisha Sharma CV PDF"
+            aria-label="download cv — Amisha Sharma resume PDF"
           >
             download cv
-            <span className="cta-hint">Get resume PDF</span>
+            <span className="cta-hint" aria-hidden>
+              Get resume PDF
+            </span>
           </GtaButtonSound>
           <GtaButtonSound
             href={data.linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
             $variant="sand"
-            aria-label="Open Amisha Sharma LinkedIn profile"
+            aria-label="linkedin — Amisha Sharma profile"
           >
             linkedin
-            <span className="cta-hint">Connect on LinkedIn</span>
+            <span className="cta-hint" aria-hidden>
+              Connect on LinkedIn
+            </span>
           </GtaButtonSound>
         </Reveal>
 
