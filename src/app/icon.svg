@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- SA-style safehouse tile: night square, Grove-green frame, sand wanted star -->
+  <rect width="64" height="64" fill="#0c0913"/>
+  <rect x="3" y="3" width="58" height="58" fill="none" stroke="#54b948" stroke-width="4"/>
+  <path d="M32 9l6.6 14.4 15.7 1.8-11.6 10.7 3.2 15.5L32 43.6l-13.9 7.8 3.2-15.5L9.7 25.2l15.7-1.8z" fill="#e8d5a0" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+</svg>
