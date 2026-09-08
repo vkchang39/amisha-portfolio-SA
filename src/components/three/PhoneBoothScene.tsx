@@ -1,10 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, ThreeEvent } from "@react-three/fiber";
 import { SA3D } from "@/lib/gtaSa3d";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+
+function createCallTexture(text: string) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 96;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.fillRect(8, 12, canvas.width - 16, canvas.height - 24);
+  ctx.strokeStyle = SA3D.moneyBright;
+  ctx.lineWidth = 4;
+  ctx.strokeRect(10, 14, canvas.width - 20, canvas.height - 28);
+  ctx.font = "bold 52px Impact, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = SA3D.moneyBright;
+  ctx.shadowColor = SA3D.grove;
+  ctx.shadowBlur = 18;
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
 
 function StreetLamp() {
   return (
@@ -37,16 +64,40 @@ function PhoneHandset() {
   );
 }
 
-function Booth() {
+function NeonTube({
+  position,
+  rotation = [0, 0, 0] as [number, number, number],
+  args,
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  args: [number, number, number];
+}) {
+  return (
+    <mesh position={position} rotation={rotation}>
+      <boxGeometry args={args} />
+      <meshBasicMaterial color={SA3D.moneyBright} transparent opacity={0.85} />
+    </mesh>
+  );
+}
+
+function Booth({ onActivate }: { onActivate?: () => void }) {
   const signRef = useRef<THREE.Mesh>(null);
   const groupRef = useRef<THREE.Group>(null);
   const isCoarsePointer = useMediaQuery("(pointer: coarse)");
+  const callTexture = useMemo(() => createCallTexture("CALL"), []);
+
+  useEffect(() => {
+    return () => {
+      callTexture?.dispose();
+    };
+  }, [callTexture]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
     if (signRef.current) {
       const mat = signRef.current.material as THREE.MeshBasicMaterial;
-      mat.opacity = 0.75 + Math.sin(t * 2.5) * 0.2;
+      mat.opacity = 0.72 + Math.sin(t * 2.5) * 0.22;
     }
     if (groupRef.current && !isCoarsePointer) {
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
@@ -57,9 +108,23 @@ function Booth() {
     }
   });
 
+  const handleActivate = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    onActivate?.();
+  };
+
   return (
-    <group ref={groupRef} position={[0, -0.6, 0]}>
-      {/* Sidewalk */}
+    <group
+      ref={groupRef}
+      position={[0, -0.6, 0]}
+      onClick={handleActivate}
+      onPointerOver={() => {
+        document.body.style.cursor = "pointer";
+      }}
+      onPointerOut={() => {
+        document.body.style.cursor = "";
+      }}
+    >
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[8, 5]} />
         <meshBasicMaterial color={SA3D.asphalt} />
@@ -69,19 +134,16 @@ function Booth() {
         <meshBasicMaterial color={SA3D.concrete} />
       </mesh>
 
-      {/* Booth body — classic SA red */}
       <mesh position={[0, 1.35, 0]}>
         <boxGeometry args={[1.15, 2.5, 1.15]} />
         <meshBasicMaterial color={SA3D.blood} />
       </mesh>
 
-      {/* Dark frame trim */}
       <mesh position={[0, 1.35, 0]}>
-        <boxGeometry args={[1.22, 2.58, 1.22]} />
-        <meshBasicMaterial color={SA3D.bloodDark} wireframe transparent opacity={0.15} />
+        <boxGeometry args={[1.24, 2.6, 1.24]} />
+        <meshBasicMaterial color={SA3D.bloodDark} wireframe transparent opacity={0.18} />
       </mesh>
 
-      {/* Roof cap */}
       <mesh position={[0, 2.72, 0]}>
         <boxGeometry args={[1.35, 0.18, 1.35]} />
         <meshBasicMaterial color={SA3D.bloodDark} />
@@ -91,21 +153,23 @@ function Booth() {
         <meshBasicMaterial color={SA3D.nightDeep} />
       </mesh>
 
-      {/* Glass panels */}
       <mesh position={[-0.42, 1.55, 0]}>
         <planeGeometry args={[0.22, 1.6]} />
-        <meshBasicMaterial color={SA3D.hud} transparent opacity={0.28} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={SA3D.hud} transparent opacity={0.32} side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0.42, 1.55, 0]}>
         <planeGeometry args={[0.22, 1.6]} />
-        <meshBasicMaterial color={SA3D.hud} transparent opacity={0.28} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={SA3D.hud} transparent opacity={0.32} side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0, 1.55, 0.58]}>
         <planeGeometry args={[0.75, 1.6]} />
-        <meshBasicMaterial color={SA3D.hudDark} transparent opacity={0.4} side={THREE.DoubleSide} />
+        <meshBasicMaterial color={SA3D.hudDark} transparent opacity={0.45} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Interior shadow */}
+      <NeonTube position={[-0.55, 1.55, 0.58]} args={[0.04, 1.7, 0.04]} />
+      <NeonTube position={[0.55, 1.55, 0.58]} args={[0.04, 1.7, 0.04]} />
+      <NeonTube position={[0, 2.4, 0.58]} args={[1.05, 0.04, 0.04]} />
+
       <mesh position={[0, 1.3, 0.2]}>
         <boxGeometry args={[0.7, 2, 0.5]} />
         <meshBasicMaterial color={SA3D.nightDeep} />
@@ -113,22 +177,28 @@ function Booth() {
 
       <PhoneHandset />
 
-      {/* CALL sign — Grove green neon */}
-      <mesh ref={signRef} position={[0, 2.35, 0.6]}>
-        <planeGeometry args={[0.65, 0.22]} />
-        <meshBasicMaterial color={SA3D.moneyBright} transparent opacity={0.85} />
+      <mesh ref={signRef} position={[0, 2.35, 0.62]}>
+        <planeGeometry args={[0.78, 0.3]} />
+        <meshBasicMaterial
+          map={callTexture ?? undefined}
+          color={callTexture ? "#ffffff" : SA3D.moneyBright}
+          transparent
+          opacity={0.9}
+          toneMapped={false}
+        />
       </mesh>
-      <mesh position={[0, 2.35, 0.59]}>
-        <planeGeometry args={[0.55, 0.02]} />
-        <meshBasicMaterial color={SA3D.grove} />
-      </mesh>
+      <pointLight position={[0, 2.35, 0.9]} intensity={0.55} color={SA3D.moneyBright} distance={3.5} />
 
       <StreetLamp />
     </group>
   );
 }
 
-export default function PhoneBoothScene() {
+export default function PhoneBoothScene({
+  onActivate,
+}: {
+  onActivate?: () => void;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -154,7 +224,7 @@ export default function PhoneBoothScene() {
       >
         <fog attach="fog" args={[SA3D.violetDeep, 4, 12]} />
         <ambientLight intensity={0.45} color={SA3D.violet} />
-        <Booth />
+        <Booth onActivate={onActivate} />
       </Canvas>
     </div>
   );

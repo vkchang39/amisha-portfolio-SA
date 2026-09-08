@@ -2,36 +2,55 @@
 
 import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useResume } from "@/hooks/useResume";
 import { useAppReady } from "@/context/AppReadyContext";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { GtaButtonSound } from "@/components/ui/GtaButtonSound";
+import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
 import { withBasePath } from "@/lib/basePath";
 import "@/lib/gsap";
 
-const HeroScene = dynamic(
-  () => import("@/components/three/HeroScene"),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        className="absolute inset-0 bg-gradient-to-b from-night via-asphalt to-sunset-2/30"
-        aria-hidden
-      />
-    ),
-  }
-);
-
-function HeroFallback() {
+/** Matches HeroScene clear color / fog so chunk load never flashes a different photo. */
+function HeroScenePlaceholder() {
   return (
-    <div
-      className="absolute inset-0 bg-gradient-to-b from-[#2a1430] via-night to-[#0c0913]"
-      aria-hidden
-    >
-      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-sunset/20 to-transparent" />
-      <div className="absolute left-1/2 top-[28%] h-40 w-40 -translate-x-1/2 rounded-full bg-gradient-to-b from-sunset to-blood opacity-60 blur-sm" />
+    <div className="absolute inset-0 overflow-hidden hero-scene-placeholder" aria-hidden>
+      <div className="absolute inset-0 bg-[#1a0818]" />
+      <div className="absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-[#ff6a1a]/50 via-[#c42860]/25 to-transparent" />
+      <div className="absolute inset-x-0 top-[22%] h-40 bg-gradient-to-r from-transparent via-[#ff9a2a]/35 to-transparent blur-md" />
+      <div className="absolute left-1/2 top-[16%] h-52 w-52 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#ffd060] via-[#ff6a1a] to-[#c42840] opacity-65 blur-xl" />
+      <div className="hero-fallback-skyline absolute inset-x-0 bottom-[16%] h-28 opacity-90" />
+      <div className="hero-fallback-grid absolute inset-x-0 bottom-0 h-[40%] opacity-40" />
+    </div>
+  );
+}
+
+const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
+  ssr: false,
+  loading: () => <HeroScenePlaceholder />,
+});
+
+/** Permanent non-WebGL / mobile art fallback — only when 3D will not run. */
+function HeroArtFallback() {
+  return (
+    <div className="absolute inset-0 overflow-hidden hero-fallback" aria-hidden>
+      <Image
+        src={withBasePath("/images/bg-city-night.webp")}
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover scale-110 opacity-70 contrast-[1.15] saturate-[1.2]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#4a1040]/55 via-[#2a0c28]/35 to-night" />
+      <div className="absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-[#ff6a1a]/45 via-[#c42860]/20 to-transparent" />
+      <div className="absolute inset-x-0 top-[30%] h-32 bg-gradient-to-r from-transparent via-[#ff9a2a]/40 to-transparent blur-lg" />
+      <div className="absolute left-1/2 top-[18%] h-56 w-56 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#ffd060] via-[#ff6a1a] to-[#c42840] opacity-70 blur-xl" />
+      <div className="hero-fallback-skyline absolute inset-x-0 bottom-[18%] h-28 opacity-80" />
+      <div className="hero-fallback-grid absolute inset-x-0 bottom-0 h-[42%] opacity-45" />
     </div>
   );
 }
@@ -72,11 +91,14 @@ export function Hero() {
   const { data } = useResume();
   const { isAppReady } = useAppReady();
   const { cinematicEnabled } = useCinematicMotion();
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [webglSupported] = useState(() =>
     typeof window !== "undefined" ? detectWebGL() : true
   );
-  const showScene = isAppReady && webglSupported && cinematicEnabled;
+
+  // Intent to use WebGL — mount early under the loading screen so the photo→canvas swap never happens.
+  const useWebGLScene = webglSupported && cinematicEnabled && !isMobile;
 
   useGSAP(
     () => {
@@ -142,10 +164,16 @@ export function Hero() {
       className="relative h-svh min-h-[600px] md:min-h-[640px] overflow-hidden"
     >
       <div aria-hidden className="absolute inset-0">
-        {showScene ? (
-          <HeroScene scrollProgress={scrollProgress} />
+        {useWebGLScene ? (
+          <>
+            {/* Base layer stays until/while canvas paints — same palette as the 3D sky */}
+            <HeroScenePlaceholder />
+            <div className="absolute inset-0">
+              <HeroScene scrollProgress={scrollProgress} />
+            </div>
+          </>
         ) : (
-          <HeroFallback />
+          <HeroArtFallback />
         )}
       </div>
 
@@ -164,6 +192,10 @@ export function Hero() {
         <p className="hero-sub mt-6 md:mt-8 max-w-xl font-[family-name:var(--font-oswald)] uppercase tracking-[0.2em] text-sm md:text-base text-sand/90">
           IT Project Coordinator · San Andreas Edition
         </p>
+
+        <div className="hero-sub mt-4">
+          <AvailabilityBadge availability={data.availability} compact />
+        </div>
 
         <div className="mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
           <span className="hero-cta">

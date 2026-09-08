@@ -1,10 +1,6 @@
 import { withBasePath } from "@/lib/basePath";
 
-export const LOADING_SPLASHES = [
-  "/images/bg-grove-street.jpg",
-  "/images/bg-desert-highway.jpg",
-  "/images/bg-city-night.jpg",
-] as const;
+export const LOADING_SPLASHES = ["/images/loading-sa-collage.webp"] as const;
 
 export const LOADING_TIPS = [
   "Press ESC to open the pause menu and browse stats.",

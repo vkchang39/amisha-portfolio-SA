@@ -83,30 +83,27 @@ export function LoadingScreen() {
   return (
     <div
       ref={container}
-      className="loading-screen fixed inset-0 z-[var(--z-loading)] bg-night"
+      className="loading-screen fixed inset-0 z-[var(--z-loading)] bg-black"
       role="status"
       aria-live="polite"
       aria-label="Loading portfolio"
     >
       <div
-        className="loading-splash"
+        className={`loading-splash ${reducedMotion ? "" : "loading-splash-animated"}`}
         style={{ backgroundImage: `url(${splash})` }}
         aria-hidden
       />
-      <div className="absolute inset-0 bg-night/90" aria-hidden />
-
-      <div className="absolute inset-0 flex" aria-hidden>
-        <div className="loading-panel h-full flex-1 bg-grove" />
-        <div className="loading-panel h-full flex-1 bg-night" />
-        <div className="loading-panel h-full flex-1 bg-blood/90" />
-        <div className="loading-panel h-full flex-1 bg-night" />
-        <div className="loading-panel h-full flex-1 bg-asphalt" />
-      </div>
+      {/* Soft vignette so LOADING UI stays readable over the collage */}
+      <div className="loading-splash-scrim" aria-hidden />
 
       <div className="loading-text absolute inset-0 flex flex-col items-center justify-center gap-5 px-4">
-        <p className="gta-title text-4xl md:text-6xl text-sand tracking-wide">LOADING…</p>
-        <p className="gta-title text-3xl md:text-5xl text-sand/90">Amisha Sharma</p>
-        <div className="w-56 md:w-72 border border-sand/50 bg-black/40 p-1">
+        <p className="gta-title text-4xl md:text-6xl text-sand tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+          LOADING…
+        </p>
+        <p className="gta-title text-3xl md:text-5xl text-sand/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+          Amisha Sharma
+        </p>
+        <div className="w-56 md:w-72 border border-sand/50 bg-black/55 p-1">
           <div className="loading-bar-fill h-2 w-full origin-left scale-x-0 bg-gradient-to-r from-grove to-money" />
         </div>
         <p className="loading-percent">{displayProgress}%</p>

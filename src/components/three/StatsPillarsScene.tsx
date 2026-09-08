@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -14,6 +14,33 @@ function lerpColor(a: string, b: string, t: number): string {
   const ca = new THREE.Color(a);
   const cb = new THREE.Color(b);
   return ca.lerp(cb, t).getStyle();
+}
+
+function createLabelTexture(label: string, value: number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256;
+  canvas.height = 96;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "rgba(8, 12, 22, 0.75)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = SA3D.hud;
+  ctx.lineWidth = 3;
+  ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+  ctx.fillStyle = SA3D.sand;
+  ctx.font = "bold 28px Oswald, Impact, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(label.toUpperCase(), canvas.width / 2, 40);
+  ctx.fillStyle = SA3D.moneyBright;
+  ctx.font = "bold 34px Impact, sans-serif";
+  ctx.fillText(String(value), canvas.width / 2, 78);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
 }
 
 function StatBar3D({
@@ -31,6 +58,16 @@ function StatBar3D({
   const barRef = useRef<THREE.Mesh>(null);
   const capRef = useRef<THREE.Mesh>(null);
   const progress = useRef(animated ? 0 : 1);
+  const labelTexture = useMemo(
+    () => createLabelTexture(skill.label.split(" ")[0] ?? skill.label, skill.value),
+    [skill.label, skill.value]
+  );
+
+  useEffect(() => {
+    return () => {
+      labelTexture?.dispose();
+    };
+  }, [labelTexture]);
 
   const spacing = 1.35;
   const startX = -((total - 1) * spacing) / 2;
@@ -73,7 +110,6 @@ function StatBar3D({
 
   return (
     <group ref={groupRef} position={[x, 0, 0]}>
-      {/* Pedestal base */}
       <mesh position={[0, 0.04, 0]}>
         <boxGeometry args={[0.72, 0.08, 0.72]} />
         <meshBasicMaterial color={SA3D.concreteDark} />
@@ -83,23 +119,27 @@ function StatBar3D({
         <meshBasicMaterial color={SA3D.concrete} />
       </mesh>
 
-      {/* Stat pillar */}
       <mesh ref={barRef} position={[0, targetHeight / 2 + 0.08, 0]} scale={[0.42, targetHeight, 0.42]}>
         <boxGeometry args={[1, 1, 1]} />
         <meshBasicMaterial color={barColor} />
       </mesh>
 
-      {/* Top cap / respect marker */}
       <mesh ref={capRef} position={[0, targetHeight + 0.1, 0]}>
         <boxGeometry args={[0.5, 0.1, 0.5]} />
         <meshBasicMaterial color={capColor} />
       </mesh>
 
-      {/* Front HUD strip */}
       <mesh position={[0, 0.22, 0.22]}>
         <boxGeometry args={[0.5, 0.06, 0.02]} />
         <meshBasicMaterial color={SA3D.hud} />
       </mesh>
+
+      {labelTexture && (
+        <mesh position={[0, -0.18, 0.42]}>
+          <planeGeometry args={[0.95, 0.36]} />
+          <meshBasicMaterial map={labelTexture} transparent toneMapped={false} />
+        </mesh>
+      )}
     </group>
   );
 }
@@ -107,7 +147,6 @@ function StatBar3D({
 function GymRoom({ skills, animated }: { skills: SkillStat[]; animated: boolean }) {
   return (
     <group position={[0, -0.5, 0]}>
-      {/* Back wall — SA gym screen blue */}
       <mesh position={[0, 1.6, -1.8]}>
         <boxGeometry args={[10, 3.2, 0.15]} />
         <meshBasicMaterial color={SA3D.gymWall} />
@@ -117,16 +156,14 @@ function GymRoom({ skills, animated }: { skills: SkillStat[]; animated: boolean 
         <meshBasicMaterial color={SA3D.hudDark} transparent opacity={0.35} />
       </mesh>
 
-      {/* Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[10, 4]} />
         <meshBasicMaterial color={SA3D.gymFloor} />
       </mesh>
 
-      {/* Floor grid lines */}
       {Array.from({ length: 9 }, (_, i) => (
         <mesh
-          key={`grid-${i}`}
+          key={`grid-v-${i}`}
           rotation={[-Math.PI / 2, 0, 0]}
           position={[-4 + i, 0.01, 0]}
         >
@@ -134,12 +171,22 @@ function GymRoom({ skills, animated }: { skills: SkillStat[]; animated: boolean 
           <meshBasicMaterial color={SA3D.hud} transparent opacity={0.12} />
         </mesh>
       ))}
+      {Array.from({ length: 5 }, (_, i) => (
+        <mesh
+          key={`grid-h-${i}`}
+          rotation={[-Math.PI / 2, 0, 0]}
+          position={[0, 0.012, -1.4 + i * 0.7]}
+        >
+          <planeGeometry args={[8.2, 0.02]} />
+          <meshBasicMaterial color={SA3D.hud} transparent opacity={0.1} />
+        </mesh>
+      ))}
 
-      {/* Fluorescent light bar */}
       <mesh position={[0, 3.1, -1.2]}>
         <boxGeometry args={[3.5, 0.08, 0.2]} />
         <meshBasicMaterial color={SA3D.sand} transparent opacity={0.85} />
       </mesh>
+      <pointLight position={[0, 3, -0.8]} intensity={0.4} color={SA3D.sand} distance={8} />
 
       {skills.map((skill, i) => (
         <StatBar3D
@@ -155,13 +202,22 @@ function GymRoom({ skills, animated }: { skills: SkillStat[]; animated: boolean 
 }
 
 function SceneContent({ skills, animated }: { skills: SkillStat[]; animated: boolean }) {
+  const cameraGroup = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (!cameraGroup.current) return;
+    const t = state.clock.elapsedTime;
+    cameraGroup.current.position.y = Math.sin(t * 0.7) * 0.04;
+    cameraGroup.current.rotation.y = Math.sin(t * 0.35) * 0.02;
+  });
+
   return (
-    <>
+    <group ref={cameraGroup}>
       <ambientLight intensity={0.65} />
       <directionalLight position={[2, 5, 3]} intensity={0.5} color={SA3D.sand} />
       <pointLight position={[0, 3, 1]} intensity={0.35} color={SA3D.hud} />
       <GymRoom skills={skills} animated={animated} />
-    </>
+    </group>
   );
 }
 

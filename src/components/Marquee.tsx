@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useCinematicMotion } from "@/hooks/useCinematicMotion";
 
 const PHRASES = [
   "Grove Street — Home",
@@ -29,6 +30,7 @@ function MarqueeStar() {
 
 export function Marquee() {
   const [paused, setPaused] = useState(false);
+  const { cinematicEnabled } = useCinematicMotion();
 
   useEffect(() => {
     const onVisibility = () => {
@@ -46,16 +48,22 @@ export function Marquee() {
     </span>
   ));
 
+  const shouldAnimate = cinematicEnabled && !paused;
+
   return (
     <div
       className="relative overflow-hidden border-y border-sand/15 bg-night-2 py-3"
       aria-hidden
     >
       <div
-        className={`marquee-track flex w-max whitespace-nowrap meta-label tracking-[0.2em] ${paused ? "marquee-track-paused" : ""}`}
+        className={`marquee-track flex w-max whitespace-nowrap meta-label tracking-[0.2em] ${
+          shouldAnimate ? "" : "marquee-track-paused"
+        }`}
       >
         <div className="flex shrink-0">{row}</div>
-        <div className="flex shrink-0">{row}</div>
+        <div className="flex shrink-0" aria-hidden>
+          {row}
+        </div>
       </div>
     </div>
   );
