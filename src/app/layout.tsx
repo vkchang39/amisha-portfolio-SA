@@ -24,10 +24,50 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_URL = "https://vkchang39.github.io/amisha-portfolio-SA";
+const SITE_TITLE =
+  "Amisha Sharma — IT Project Coordinator | San Andreas Edition";
+const SITE_DESCRIPTION =
+  "Portfolio of Amisha Sharma, IT Project Coordinator. Grove Street. Home. Missions delivered, respect earned.";
+
 export const metadata: Metadata = {
-  title: "Amisha Sharma — IT Project Coordinator | San Andreas Edition",
-  description:
-    "Portfolio of Amisha Sharma, IT Project Coordinator. Grove Street. Home. Missions delivered, respect earned.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  applicationName: "Amisha Sharma Portfolio",
+  authors: [{ name: "Amisha Sharma" }],
+  keywords: [
+    "Amisha Sharma",
+    "IT Project Coordinator",
+    "portfolio",
+    "project management",
+    "GTA San Andreas",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "Amisha Sharma — San Andreas Edition",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/images/og-share.jpg",
+        width: 1280,
+        height: 720,
+        alt: "Amisha Sharma — IT Project Coordinator, San Andreas Edition",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/images/og-share.jpg"],
+  },
 };
 
 export default function RootLayout({
