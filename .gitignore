@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .cursor/
+
+# Playwright
+/test-results/
+/playwright-report/
+!.env.example
+/.lighthouseci/

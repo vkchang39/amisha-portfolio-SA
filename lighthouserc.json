@@ -1,0 +1,61 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./out",
+      "url": ["http://localhost/index.html"],
+      "numberOfRuns": 2,
+      "settings": {
+        "preset": "desktop",
+        "skipAudits": ["uses-http2", "is-on-https"]
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:no-pwa",
+      "assertions": {
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:seo": ["error", { "minScore": 0.95 }],
+        "categories:best-practices": ["warn", { "minScore": 0.9 }],
+        "categories:performance": ["warn", { "minScore": 0.7 }],
+
+        "resource-summary:image:size": ["error", { "maxNumericValue": 900000 }],
+        "resource-summary:script:size": ["error", { "maxNumericValue": 700000 }],
+        "resource-summary:font:size": ["warn", { "maxNumericValue": 150000 }],
+        "resource-summary:total:size": ["error", { "maxNumericValue": 1800000 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 2500 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 1200 }],
+
+        "errors-in-console": "warn",
+        "render-blocking-resources": "warn",
+        "total-byte-weight": "warn",
+        "speed-index": "warn",
+        "max-potential-fid": "off",
+        "unused-javascript": "off",
+        "unused-css-rules": "off",
+        "uses-responsive-images": "off",
+        "offscreen-images": "off",
+        "unsized-images": "off",
+        "non-composited-animations": "off",
+        "bf-cache": "off",
+        "csp-xss": "off",
+        "valid-source-maps": "off",
+        "forced-reflow-insight": "off",
+        "image-delivery-insight": "off",
+        "legacy-javascript-insight": "off",
+        "legacy-javascript": "off",
+        "network-dependency-tree-insight": "off",
+        "render-blocking-insight": "off",
+        "third-parties-insight": "off",
+        "dom-size-insight": "off",
+        "cache-insight": "off",
+        "lcp-discovery-insight": "off",
+        "font-display-insight": "off",
+        "cls-culprits-insight": "off"
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci/report"
+    }
+  }
+}
