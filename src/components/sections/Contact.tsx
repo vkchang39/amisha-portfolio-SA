@@ -137,7 +137,7 @@ export function Contact({ year }: { year: number }) {
             <div className="mission-card group p-3">
               <div className="relative h-full min-h-52 md:min-h-56 overflow-hidden">
                 <Image
-                  src="/images/contact-payphone.jpg"
+                  src={withBasePath("/images/contact-payphone.jpg")}
                   alt="GTA San Andreas style payphone on a Los Santos street"
                   fill
                   sizes="(min-width: 768px) 24rem, 100vw"

@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { withBasePath } from "@/lib/basePath";
 import "@/lib/gsap";
 
 interface SectionBackgroundProps {
@@ -59,7 +60,7 @@ export function SectionBackground({
     >
       <div ref={bgRef} className="pointer-events-none absolute inset-0" aria-hidden>
         <Image
-          src={image}
+          src={withBasePath(image)}
           alt=""
           fill
           sizes="(max-width: 1200px) 100vw, 1200px"

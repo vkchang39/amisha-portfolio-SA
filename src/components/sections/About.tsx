@@ -10,6 +10,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionBackground } from "@/components/ui/SectionBackground";
 import { SectionTitle } from "@/components/ui/SectionTitle";
 import { getSectionAccent } from "@/lib/sectionAccents";
+import { withBasePath } from "@/lib/basePath";
 import Image from "next/image";
 import "@/lib/gsap";
 
@@ -72,7 +73,7 @@ export function About() {
             <div className="mission-card p-3 group">
               <div className="relative overflow-hidden min-h-[220px]">
                 <Image
-                  src="/images/about-portrait.jpg"
+                  src={withBasePath("/images/about-portrait.jpg")}
                   alt="Amisha Sharma — GTA San Andreas style portrait art"
                   width={819}
                   height={546}

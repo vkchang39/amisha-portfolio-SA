@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppReady } from "@/context/AppReadyContext";
 import { useGameUi } from "@/context/GameUiContext";
 import { MAP_LOCATIONS } from "@/lib/mapLocations";
+import { withBasePath } from "@/lib/basePath";
 import { useGameAudio } from "@/hooks/useGameAudio";
 
 const MIN_ZOOM = 1;
@@ -247,7 +248,7 @@ export function MapScreen() {
               }}
             >
               <Image
-                src="/images/map-sa.svg"
+                src={withBasePath("/images/map-sa.svg")}
                 alt=""
                 fill
                 className="object-contain opacity-90"

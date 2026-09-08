@@ -9,6 +9,7 @@ import { useCinematicMotion } from "@/hooks/useCinematicMotion";
 import { ProjectCompleteStamp } from "@/components/ProjectCompleteStamp";
 import { SectionBackground } from "@/components/ui/SectionBackground";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { withBasePath } from "@/lib/basePath";
 import { getSectionAccent } from "@/lib/sectionAccents";
 import "@/lib/gsap";
 
@@ -67,7 +68,7 @@ export function Projects() {
               <ProjectCompleteStamp projectId={project.id} />
               <div className="relative h-48 sm:h-52 md:h-60 overflow-hidden border-b border-sand/15">
                 <Image
-                  src={project.image}
+                  src={withBasePath(project.image)}
                   alt={`${project.name} — GTA San Andreas style artwork`}
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
