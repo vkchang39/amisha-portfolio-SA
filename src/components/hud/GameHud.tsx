@@ -1,15 +1,81 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useAppReady } from "@/context/AppReadyContext";
-import { useGameUi } from "@/context/GameUiContext";
+import { MONEY_PER_SECTION, useGameUi } from "@/context/GameUiContext";
 import { MAP_LOCATIONS } from "@/lib/mapLocations";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { useResume } from "@/hooks/useResume";
+import { withBasePath } from "@/lib/basePath";
 import "@/lib/gsap";
+
+const TICKER_MS = 900;
 
 function formatMoney(value: number): string {
   return `$${value.toLocaleString("en-US")}`;
+}
+
+/** Brief "+$125,000" pop next to the money counter when a new district is reached. */
+function MoneyTicker({ visitedCount }: { visitedCount: number }) {
+  const [visible, setVisible] = useState(false);
+  const prevCount = useRef(visitedCount);
+
+  useEffect(() => {
+    if (visitedCount <= prevCount.current) return;
+    prevCount.current = visitedCount;
+    setVisible(true);
+    const t = window.setTimeout(() => setVisible(false), TICKER_MS);
+    return () => window.clearTimeout(t);
+  }, [visitedCount]);
+
+  if (!visible) return null;
+  return (
+    <span className="game-hud-ticker" aria-hidden>
+      +{formatMoney(MONEY_PER_SECTION)}
+    </span>
+  );
+}
+
+/** SA-style HUD clock: session time as an in-game HH:MM (1 real second = 1 game minute). */
+function SessionClock() {
+  const [minutes, setMinutes] = useState(0);
+  useEffect(() => {
+    const t = window.setInterval(() => setMinutes((m) => m + 1), 1000);
+    return () => window.clearInterval(t);
+  }, []);
+  // Start the "day" at 07:00 like a fresh SA save.
+  const total = 7 * 60 + minutes;
+  const hh = String(Math.floor(total / 60) % 24).padStart(2, "0");
+  const mm = String(total % 60).padStart(2, "0");
+  return (
+    <p className="game-hud-clock" aria-hidden>
+      {hh}:{mm}
+    </p>
+  );
+}
+
+/** Always-visible CV download — one click from any viewport, styled as a HUD chip. */
+export function HudCvButton() {
+  const { isAppReady } = useAppReady();
+  const { pauseOpen, mapOpen, radioExpanded } = useGameUi();
+  const { data } = useResume();
+
+  if (!isAppReady || !data || pauseOpen || mapOpen || radioExpanded) return null;
+
+  return (
+    <a
+      href={withBasePath(data.cvUrl)}
+      download
+      className="game-hud-cv"
+      aria-label="Download CV (PDF)"
+    >
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+        <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span>CV</span>
+    </a>
+  );
 }
 
 function WantedStars({ level }: { level: number }) {
@@ -115,6 +181,19 @@ function StatusBar({
   );
 }
 
+export function ZoneAnnouncer() {
+  const { isAppReady } = useAppReady();
+  const { zoneToast } = useGameUi();
+
+  if (!isAppReady || !zoneToast) return null;
+
+  return (
+    <div className="game-hud-zone-toast" role="status" aria-live="polite">
+      Entering: {zoneToast}
+    </div>
+  );
+}
+
 export function GameHud() {
   const { isAppReady } = useAppReady();
   const {
@@ -123,8 +202,10 @@ export function GameHud() {
     wantedLevel,
     activeLocation,
     scrollProgress,
-    zoneToast,
     activeSection,
+    hpFilled,
+    arFilled,
+    visitedSections,
   } = useGameUi();
   const { cinematicEnabled } = useCinematicMotion();
 
@@ -139,10 +220,24 @@ export function GameHud() {
   return (
     <div className="game-hud pointer-events-none fixed inset-0 z-[var(--z-hud)]" aria-hidden>
       <div className="game-hud-panel game-hud-top-right">
-        <p className="game-hud-money">{formatMoney(money)}</p>
+        <SessionClock />
+        <div className="relative">
+          <p className="game-hud-money">{formatMoney(money)}</p>
+          {cinematicEnabled && <MoneyTicker visitedCount={visitedSections.length} />}
+        </div>
         <WantedStars level={wantedLevel} />
-        <StatusBar label="HP" segments={10} filled={10} colorClass="game-hud-hp" />
-        <StatusBar label="AR" segments={10} filled={8} colorClass="game-hud-ar" />
+        <StatusBar
+          label="HP"
+          segments={10}
+          filled={hpFilled}
+          colorClass="game-hud-hp"
+        />
+        <StatusBar
+          label="AR"
+          segments={10}
+          filled={arFilled}
+          colorClass="game-hud-ar"
+        />
         <div className="game-hud-weapon">
           <svg
             className="game-hud-weapon-icon"
@@ -183,12 +278,6 @@ export function GameHud() {
         </div>
         <p className="game-hud-radar-label">RADAR</p>
       </div>
-
-      {zoneToast && (
-        <div className="game-hud-zone-toast" role="status">
-          Entering: {zoneToast}
-        </div>
-      )}
     </div>
   );
 }

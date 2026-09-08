@@ -4,7 +4,13 @@ import { useCallback, useRef } from "react";
 import { useGameUi } from "@/context/GameUiContext";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-type SoundType = "menuMove" | "menuSelect" | "missionPassed" | "buttonClick";
+type SoundType =
+  | "menuMove"
+  | "menuSelect"
+  | "missionPassed"
+  | "buttonClick"
+  | "zoneChange"
+  | "cheatActivated";
 
 function playTone(
   ctx: AudioContext,
@@ -62,6 +68,19 @@ export function useGameAudio() {
           playTone(ctx, 523, 0.12, "square", 0.07);
           window.setTimeout(() => playTone(ctx, 659, 0.12, "square", 0.07), 80);
           window.setTimeout(() => playTone(ctx, 784, 0.2, "square", 0.08), 160);
+          break;
+        case "zoneChange":
+          // Radio re-tune: short static burst then a soft two-note sting.
+          playTone(ctx, 180, 0.05, "sawtooth", 0.025);
+          window.setTimeout(() => playTone(ctx, 392, 0.09, "triangle", 0.035), 60);
+          window.setTimeout(() => playTone(ctx, 494, 0.14, "triangle", 0.035), 140);
+          break;
+        case "cheatActivated":
+          // Classic rising cheat blip.
+          playTone(ctx, 330, 0.07, "square", 0.06);
+          window.setTimeout(() => playTone(ctx, 440, 0.07, "square", 0.06), 70);
+          window.setTimeout(() => playTone(ctx, 660, 0.07, "square", 0.06), 140);
+          window.setTimeout(() => playTone(ctx, 880, 0.16, "square", 0.07), 210);
           break;
         default: {
           const exhaustive: never = type;
