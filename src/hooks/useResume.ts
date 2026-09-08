@@ -3,16 +3,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { resume, type Resume } from "@/lib/resume";
 
-async function fetchResume(): Promise<Resume> {
-  const res = await fetch("/api/resume");
-  if (!res.ok) throw new Error("Failed to load resume data");
-  return res.json();
+async function loadResume(): Promise<Resume> {
+  // Static export / GitHub Pages has no API routes — use bundled resume data.
+  return resume;
 }
 
 export function useResume() {
   return useQuery({
     queryKey: ["resume"],
-    queryFn: fetchResume,
+    queryFn: loadResume,
     // Local data doubles as instant placeholder, so the UI never blocks.
     placeholderData: resume,
     staleTime: Infinity,

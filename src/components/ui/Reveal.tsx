@@ -2,10 +2,9 @@
 
 import { useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import "@/lib/gsap";
 
 interface RevealProps {
   children: React.ReactNode;
@@ -15,6 +14,12 @@ interface RevealProps {
   id?: string;
 }
 
+const revealClass = {
+  up: "gsap-reveal",
+  left: "gsap-reveal-left",
+  right: "gsap-reveal-right",
+} as const;
+
 export function Reveal({
   children,
   className,
@@ -23,9 +28,12 @@ export function Reveal({
   id,
 }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const { cinematicEnabled } = useCinematicMotion();
 
   useGSAP(
     () => {
+      if (!cinematicEnabled || !ref.current) return;
+
       const offset =
         from === "up"
           ? { y: 60, x: 0 }
@@ -33,23 +41,32 @@ export function Reveal({
             ? { y: 0, x: -80 }
             : { y: 0, x: 80 };
 
-      gsap.from(ref.current, {
-        ...offset,
-        opacity: 0,
-        duration: 1,
-        delay,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 88%",
-        },
-      });
+      gsap.fromTo(
+        ref.current,
+        { ...offset, opacity: 0 },
+        {
+          y: 0,
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          delay,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ref.current,
+            start: "top 88%",
+          },
+        }
+      );
     },
-    { scope: ref }
+    { scope: ref, dependencies: [cinematicEnabled, delay, from] }
   );
 
   return (
-    <div ref={ref} className={className} id={id}>
+    <div
+      ref={ref}
+      className={`${revealClass[from]}${className ? ` ${className}` : ""}`}
+      id={id}
+    >
       {children}
     </div>
   );

@@ -1,64 +1,116 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { useAppReady } from "@/context/AppReadyContext";
+import { useLoadingAssets } from "@/hooks/useLoadingAssets";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import "@/lib/gsap";
 
-gsap.registerPlugin(useGSAP);
+const MIN_DISPLAY_MS = 1200;
 
 export function LoadingScreen() {
   const container = useRef<HTMLDivElement>(null);
+  const mountTimeRef = useRef(0);
   const [done, setDone] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const { tip, splash } = useLoadingAssets();
+  const { setAppReady } = useAppReady();
+  const reducedMotion = useReducedMotion();
+
+  const finishLoading = useCallback(() => {
+    const elapsed = mountTimeRef.current
+      ? Date.now() - mountTimeRef.current
+      : MIN_DISPLAY_MS;
+    const remaining = Math.max(0, MIN_DISPLAY_MS - elapsed);
+
+    window.setTimeout(() => {
+      setDone(true);
+      setAppReady();
+      requestAnimationFrame(() => ScrollTrigger.refresh());
+    }, remaining);
+  }, [setAppReady]);
+
+  useEffect(() => {
+    mountTimeRef.current = Date.now();
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) {
+      finishLoading();
+    }
+  }, [reducedMotion, finishLoading]);
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({
-        onComplete: () => setDone(true),
+      if (reducedMotion) return;
+
+      const counter = { value: 0 };
+      gsap.to(counter, {
+        value: 100,
+        duration: 1.1,
+        ease: "power2.inOut",
+        onUpdate: () => setProgress(Math.round(counter.value)),
       });
+
+      const tl = gsap.timeline({ onComplete: finishLoading });
 
       tl.to(".loading-bar-fill", {
         scaleX: 1,
-        duration: 1.4,
+        duration: 1.1,
         ease: "power2.inOut",
       })
         .to(".loading-text", { opacity: 0, duration: 0.25 }, "+=0.15")
         .to(
-          ".loading-panel",
-          {
-            yPercent: (i) => (i % 2 === 0 ? -101 : 101),
-            duration: 0.7,
-            ease: "power4.inOut",
-            stagger: 0.06,
-          },
-          "<"
+          container.current,
+          { opacity: 0, duration: 0.45, ease: "power2.inOut" },
+          "-=0.1"
         );
     },
-    { scope: container }
+    { scope: container, dependencies: [reducedMotion, finishLoading] }
   );
 
   if (done) return null;
 
+  const displayProgress = reducedMotion ? 100 : progress;
+
   return (
-    <div ref={container} className="fixed inset-0 z-[100]">
-      {/* GTA SA loading screens are split into bold color panels */}
-      <div className="absolute inset-0 flex">
-        <div className="loading-panel h-full flex-1 bg-[#36682c]" />
-        <div className="loading-panel h-full flex-1 bg-[#0c0913]" />
-        <div className="loading-panel h-full flex-1 bg-[#b3262a]" />
-        <div className="loading-panel h-full flex-1 bg-[#0c0913]" />
-        <div className="loading-panel h-full flex-1 bg-[#e8d5a0]" />
+    <div
+      ref={container}
+      className="loading-screen fixed inset-0 z-[var(--z-loading)] bg-night"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading portfolio"
+    >
+      <div
+        className="loading-splash"
+        style={{ backgroundImage: `url(${splash})` }}
+        aria-hidden
+      />
+      <div className="absolute inset-0 bg-night/90" aria-hidden />
+
+      <div className="absolute inset-0 flex" aria-hidden>
+        <div className="loading-panel h-full flex-1 bg-grove" />
+        <div className="loading-panel h-full flex-1 bg-night" />
+        <div className="loading-panel h-full flex-1 bg-blood/90" />
+        <div className="loading-panel h-full flex-1 bg-night" />
+        <div className="loading-panel h-full flex-1 bg-asphalt" />
       </div>
 
-      <div className="loading-text absolute inset-0 flex flex-col items-center justify-center gap-6">
-        <p className="gta-title text-5xl md:text-7xl text-sand">
-          Amisha Sharma
-        </p>
+      <div className="loading-text absolute inset-0 flex flex-col items-center justify-center gap-5 px-4">
+        <p className="gta-title text-4xl md:text-6xl text-sand tracking-wide">LOADING…</p>
+        <p className="gta-title text-3xl md:text-5xl text-sand/90">Amisha Sharma</p>
         <div className="w-56 md:w-72 border border-sand/50 bg-black/40 p-1">
           <div className="loading-bar-fill h-2 w-full origin-left scale-x-0 bg-gradient-to-r from-grove to-money" />
         </div>
-        <p className="blink font-[family-name:var(--font-oswald)] text-[0.65rem] uppercase tracking-[0.45em] text-sand/70">
-          Loading San Andreas
-        </p>
+        <p className="loading-percent">{displayProgress}%</p>
+        <p className="loading-tip">{tip}</p>
       </div>
     </div>
   );

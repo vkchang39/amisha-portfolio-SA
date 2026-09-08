@@ -1,31 +1,50 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useResume } from "@/hooks/useResume";
-import { GtaButton } from "@/components/ui/GtaButton";
+import { useAppReady } from "@/context/AppReadyContext";
+import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { GtaButtonSound } from "@/components/ui/GtaButtonSound";
+import { withBasePath } from "@/lib/basePath";
+import "@/lib/gsap";
 
-const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
-  ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 bg-gradient-to-b from-night via-asphalt to-sunset-2/30" />
-  ),
-});
+const HeroScene = dynamic(
+  () => import("@/components/three/HeroScene"),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-night via-asphalt to-sunset-2/30"
+        aria-hidden
+      />
+    ),
+  }
+);
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+function HeroFallback() {
+  return (
+    <div
+      className="absolute inset-0 bg-gradient-to-b from-[#2a1430] via-night to-[#0c0913]"
+      aria-hidden
+    >
+      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-sunset/20 to-transparent" />
+      <div className="absolute left-1/2 top-[28%] h-40 w-40 -translate-x-1/2 rounded-full bg-gradient-to-b from-sunset to-blood opacity-60 blur-sm" />
+    </div>
+  );
+}
 
 function WantedStars() {
   return (
-    <div className="hero-stars flex gap-1.5" aria-label="Wanted level: 6 stars">
+    <div className="hero-stars flex gap-1.5" aria-hidden>
       {Array.from({ length: 6 }, (_, i) => (
         <svg
           key={i}
           className="hero-star w-5 h-5 md:w-6 md:h-6"
           viewBox="0 0 24 24"
-          fill={i < 6 ? "#e8d5a0" : "none"}
+          fill="#e8d5a0"
           stroke="#e8d5a0"
           strokeWidth="1.5"
         >
@@ -36,13 +55,39 @@ function WantedStars() {
   );
 }
 
+function detectWebGL(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      canvas.getContext("webgl") || canvas.getContext("experimental-webgl")
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function Hero() {
   const container = useRef<HTMLDivElement>(null);
   const { data } = useResume();
+  const { isAppReady } = useAppReady();
+  const { cinematicEnabled } = useCinematicMotion();
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [webglSupported] = useState(() =>
+    typeof window !== "undefined" ? detectWebGL() : true
+  );
+  const showScene = isAppReady && webglSupported && cinematicEnabled;
 
   useGSAP(
     () => {
+      if (!isAppReady || !cinematicEnabled) return;
+
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      gsap.set(
+        [".hero-star", ".hero-line-1", ".hero-line-2", ".hero-sub", ".hero-cta"],
+        { clearProps: "all" }
+      );
+
       tl.from(".hero-star", {
         scale: 0,
         rotation: -180,
@@ -58,8 +103,7 @@ export function Hero() {
         )
         .from(".hero-line-2", { y: 90, opacity: 0, skewY: 4, duration: 0.9 }, "-=0.65")
         .from(".hero-sub", { y: 30, opacity: 0, duration: 0.7 }, "-=0.5")
-        .from(".hero-cta", { y: 20, opacity: 0, stagger: 0.12, duration: 0.5 }, "-=0.4")
-        .from(".hero-hud", { opacity: 0, duration: 0.8 }, "-=0.3");
+        .from(".hero-cta", { y: 20, opacity: 0, stagger: 0.12, duration: 0.5 }, "-=0.4");
 
       gsap.to(".hero-content", {
         yPercent: -28,
@@ -72,8 +116,21 @@ export function Hero() {
           scrub: true,
         },
       });
+
+      gsap.to(
+        {},
+        {
+          scrollTrigger: {
+            trigger: container.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.8,
+            onUpdate: (self) => setScrollProgress(self.progress),
+          },
+        }
+      );
     },
-    { scope: container }
+    { scope: container, dependencies: [isAppReady, cinematicEnabled] }
   );
 
   if (!data) return null;
@@ -82,66 +139,59 @@ export function Hero() {
     <section
       ref={container}
       id="top"
-      className="relative h-svh min-h-[640px] overflow-hidden"
+      className="relative h-svh min-h-[600px] md:min-h-[640px] overflow-hidden"
     >
-      <HeroScene />
-
-      {/* HUD corners */}
-      <div className="hero-hud pointer-events-none absolute inset-0 z-20">
-        <div className="absolute top-24 left-6 md:left-10 font-[family-name:var(--font-oswald)]">
-          <p className="text-money text-lg md:text-xl font-semibold tracking-wider drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]">
-            $1,500,000
-          </p>
-          <p className="text-sand/80 text-xs tracking-[0.3em] uppercase mt-1">
-            Respect: Maxed
-          </p>
-        </div>
-        <div className="absolute top-24 right-6 md:right-10 text-right">
-          <p className="font-[family-name:var(--font-oswald)] text-sand text-sm tracking-[0.25em] uppercase drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]">
-            {data.title}
-          </p>
-          <p className="text-hud text-xs tracking-[0.2em] mt-1 uppercase">
-            Grove Street — Home
-          </p>
-        </div>
+      <div aria-hidden className="absolute inset-0">
+        {showScene ? (
+          <HeroScene scrollProgress={scrollProgress} />
+        ) : (
+          <HeroFallback />
+        )}
       </div>
 
-      {/* Main hero content */}
-      <div className="hero-content relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
+      <div className="hero-content relative z-10 flex h-full flex-col items-center justify-center px-4 sm:px-6 text-center">
         <WantedStars />
 
         <h1 className="mt-6 leading-[0.88]">
-          <span className="hero-line-1 gta-title block text-[16vw] md:text-[9.5rem] text-sand">
+          <span className="hero-line-1 gta-title block text-[14vw] sm:text-[12vw] md:text-[9.5rem] text-sand">
             Amisha
           </span>
-          <span className="hero-line-2 gta-title block text-[16vw] md:text-[9.5rem] text-sunset">
+          <span className="hero-line-2 gta-title block text-[14vw] sm:text-[12vw] md:text-[9.5rem] text-sunset">
             Sharma
           </span>
         </h1>
 
-        <p className="hero-sub mt-8 max-w-xl font-[family-name:var(--font-oswald)] uppercase tracking-[0.3em] text-sm md:text-base text-sand/85">
+        <p className="hero-sub mt-6 md:mt-8 max-w-xl font-[family-name:var(--font-oswald)] uppercase tracking-[0.2em] text-sm md:text-base text-sand/90">
           IT Project Coordinator · San Andreas Edition
         </p>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
+        <div className="mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
           <span className="hero-cta">
-            <GtaButton href="#missions" $variant="money">
+            <GtaButtonSound
+              href="#missions"
+              $variant="money"
+              aria-label="View experience and missions"
+            >
               start missions
-            </GtaButton>
+              <span className="cta-hint">View experience</span>
+            </GtaButtonSound>
           </span>
           <span className="hero-cta">
-            <GtaButton href={data.cvUrl} download $variant="sand">
+            <GtaButtonSound
+              href={withBasePath(data.cvUrl)}
+              download
+              $variant="sand"
+              aria-label="Download Amisha Sharma CV PDF"
+            >
               download cv
-            </GtaButton>
+              <span className="cta-hint">Get resume PDF</span>
+            </GtaButtonSound>
           </span>
         </div>
       </div>
 
-      {/* Scroll hint */}
-      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-center">
-        <p className="blink font-[family-name:var(--font-oswald)] text-xs uppercase tracking-[0.4em] text-sand/60">
-          Press ↓ to continue
-        </p>
+      <div className="absolute bottom-6 md:bottom-8 left-1/2 z-10 -translate-x-1/2 text-center">
+        <p className="blink meta-label tracking-[0.3em]">Scroll to continue</p>
       </div>
     </section>
   );

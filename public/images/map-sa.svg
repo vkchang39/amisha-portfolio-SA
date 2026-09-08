@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <rect width="400" height="400" fill="#1a2838"/>
+  <path d="M80 320 L120 280 L180 300 L240 260 L320 280 L360 240 L340 180 L280 140 L220 120 L160 100 L100 140 L60 200 Z" fill="#243548" stroke="#3a5068" stroke-width="2"/>
+  <path d="M140 280 L200 240 L260 260 L300 220 L280 180 L220 160 L160 180 Z" fill="#2d4558" opacity="0.8"/>
+  <path d="M60 200 Q100 160 160 140 Q220 120 280 140 Q340 160 360 220" stroke="#4a6078" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M100 240 L180 220 L260 240 L320 200" stroke="#4a6078" stroke-width="2" fill="none" opacity="0.4"/>
+  <circle cx="200" cy="200" r="120" stroke="#5a7088" stroke-width="1" fill="none" opacity="0.2"/>
+  <text x="200" y="380" text-anchor="middle" fill="#8aa8c3" font-family="sans-serif" font-size="14" opacity="0.6">LOS SANTOS</text>
+</svg>

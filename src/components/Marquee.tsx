@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 const PHRASES = [
   "Grove Street — Home",
   "Mission Passed + Respect",
@@ -8,23 +12,50 @@ const PHRASES = [
   "On Time. On Budget.",
 ];
 
+function MarqueeStar() {
+  return (
+    <svg
+      className="marquee-star text-money"
+      viewBox="0 0 24 24"
+      width="14"
+      height="14"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8-6.1-3.4-6.1 3.4 1.4-6.8L2.2 9.1l6.9-.8z" />
+    </svg>
+  );
+}
+
 export function Marquee() {
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    const onVisibility = () => {
+      setPaused(document.visibilityState === "hidden");
+    };
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
   const row = PHRASES.map((phrase, i) => (
     <span key={i} className="mx-8 inline-flex items-center gap-8">
       <span>{phrase}</span>
-      <span className="text-money" aria-hidden>
-        ★
-      </span>
+      <MarqueeStar />
     </span>
   ));
 
   return (
-    <div className="relative overflow-hidden border-y border-sand/15 bg-night-2 py-3">
-      <div className="marquee-track flex w-max whitespace-nowrap font-[family-name:var(--font-oswald)] text-sm uppercase tracking-[0.3em] text-sand/60">
+    <div
+      className="relative overflow-hidden border-y border-sand/15 bg-night-2 py-3"
+      aria-hidden
+    >
+      <div
+        className={`marquee-track flex w-max whitespace-nowrap meta-label tracking-[0.2em] ${paused ? "marquee-track-paused" : ""}`}
+      >
         <div className="flex shrink-0">{row}</div>
-        <div className="flex shrink-0" aria-hidden>
-          {row}
-        </div>
+        <div className="flex shrink-0">{row}</div>
       </div>
     </div>
   );
