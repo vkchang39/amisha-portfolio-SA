@@ -1,55 +1,86 @@
 # Amisha Sharma — Portfolio (San Andreas Edition)
 
-A GTA San Andreas–themed portfolio website for Amisha Sharma, IT Project Coordinator. Grove Street aesthetics, mission-passed work history, player-stat skill bars, and a synthwave Three.js sunset over Los Santos.
+Personal portfolio for Amisha Sharma, IT Project Coordinator, styled as a GTA San Andreas
+save file: HUD, pause menu, loading-screen collage, mission-passed overlays, and a
+procedural Los Santos drive in WebGL. Recruiter clarity comes first; the game layer is
+always skippable.
 
-## Tech Stack
+Live: https://vkchang39.github.io/amisha-portfolio-SA/
 
-- **Next.js 16** (App Router, Turbopack) + **TypeScript**
-- **Three.js** via **@react-three/fiber**, **@react-three/drei**, and **@react-three/postprocessing** — procedural hero scene (striped sun shader, endless grid, palm silhouettes, skyline, bloom/noise/vignette)
-- **GSAP + ScrollTrigger** — scroll-driven reveals, mission-passed stamps, parallax hero
-- **Lenis** — smooth scrolling, synced with GSAP's ticker
-- **Tailwind CSS v4** — layout and theme tokens
-- **styled-components** — interactive UI primitives (GTA menu buttons, stat bars) with SSR registry
-- **TanStack Query** — resume data fetched from `/api/resume` with instant local placeholder
+## Stack
 
-## Getting Started
+Next.js 16 (static export) · React 19 · TypeScript · Tailwind CSS 4 · styled-components ·
+GSAP + Lenis · React Three Fiber / drei · TanStack Query · Playwright · Lighthouse CI
+
+## Game → résumé map
+
+| Game UI                | What it actually is                          |
+| ---------------------- | -------------------------------------------- |
+| Loading screen collage | Original SA-style art (no Rockstar assets)   |
+| Missions Passed        | Work experience (`resume.experience`)        |
+| The Big Scores         | Projects (`resume.projects`)                 |
+| Player Stats + Loadout | Skills, tools and working rituals            |
+| Skill Tree Unlocked    | Education                                    |
+| Wasted?                | Contact                                      |
+| HUD money / respect    | Scroll progress and sections visited         |
+| Pause menu (Esc)       | Map, stats, brief, settings                  |
+
+Plain-English subtitles under each section title are on by default and can be toggled in
+Pause → Settings. Hotkeys: `Esc` pause, `M` map, `R` radio. Cheat codes: type `HESOYAM`,
+`HIREME`, or `GROVE` anywhere on the page.
+
+All copy and data live in `src/lib/resume.ts`. The CV is `public/Amisha_Sharma_CV.pdf`.
+
+## Development
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev              # http://localhost:3000
+pnpm check            # tsc --noEmit + eslint
+pnpm test:e2e         # Playwright smoke tests against the static export
+pnpm lighthouse       # Lighthouse CI budgets (needs a prior `next build`)
+pnpm optimize:images  # JPEG/PNG in public/images → WebP
+pnpm generate:icons   # Rasterise src/app/icon.svg → PNG icons
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+### Optional integrations
 
-## Project Structure
+Copy `.env.example` to `.env.local`. Everything degrades gracefully when unset.
+
+| Variable                      | Effect                                                  |
+| ----------------------------- | ------------------------------------------------------- |
+| `NEXT_PUBLIC_FORM_ENDPOINT`   | Renders the contact form (Web3Forms / Formspree URL)    |
+| `NEXT_PUBLIC_FORM_ACCESS_KEY` | Web3Forms access key (omit for Formspree)               |
+| `NEXT_PUBLIC_GOATCOUNTER`     | Loads cookieless GoatCounter analytics for that site    |
+
+For the deployed site, set the same names as repository **Variables**
+(Settings → Secrets and variables → Actions); the workflow passes them to the build.
+
+## Deploy
+
+Pushes to `main` run `.github/workflows/deploy-github-pages.yml`:
+
+1. `check` — typecheck, lint, Playwright smoke tests, Lighthouse budgets
+2. `build` — `next build` with `GITHUB_PAGES=true` (sets `basePath`)
+3. `deploy` — GitHub Pages
+
+Pull requests run only the `check` job.
+
+## Project layout
 
 ```
-src/
-  app/
-    api/resume/route.ts   # Resume data as JSON API
-    layout.tsx            # Fonts (Pricedown, Oswald, Inter) + providers
-    providers.tsx         # TanStack Query + Lenis smooth scroll + styled-components registry
-    page.tsx              # Section composition
-  components/
-    three/HeroScene.tsx   # R3F synthwave San Andreas scene
-    sections/             # Hero, About, Missions, Projects, Skills, Education, Contact
-    ui/                   # GtaButton, StatBar, Reveal, SectionTitle
-  hooks/useResume.ts      # TanStack Query hook
-  lib/
-    resume.ts             # Typed resume data (source of truth)
-    registry.tsx          # styled-components SSR registry
-public/
-  Amisha_Sharma_CV.pdf    # Downloadable CV
-  fonts/pricedown.woff    # GTA display font
+src/app/            layout, page, not-found ("Wasted" 404), robots/sitemap/manifest
+src/app/styles/     CSS split by concern (hud, pause-menu, loading, sections…)
+src/components/     sections/, hud/, three/ (R3F scenes), ui/, game overlays
+src/context/gameUi/ hooks composed by GameUiContext (prefs, section tracking, missions)
+src/lib/            resume data, base path, structured data, smooth scroll, site config
+e2e/                Playwright smoke tests
+scripts/            image optimisation, icon generation, OG meta hoisting
 ```
 
-## Updating Content
+## Accessibility & motion
 
-All resume content lives in `src/lib/resume.ts`. Replace `public/Amisha_Sharma_CV.pdf` to update the downloadable CV.
-
-## Build
-
-```bash
-pnpm build
-pnpm start
-```
+- Pause → Settings → **Animations: Off** and `prefers-reduced-motion` disable Lenis,
+  marquees, WebGL, SFX and GSAP timelines.
+- `prefers-contrast: more` lifts muted text and removes translucent panels.
+- Dialogs trap focus; HUD is `aria-hidden` with a separate live region for zone changes.
