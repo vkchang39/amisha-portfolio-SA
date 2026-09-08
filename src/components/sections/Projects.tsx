@@ -6,9 +6,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useResume } from "@/hooks/useResume";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { useGameAudio } from "@/hooks/useGameAudio";
 import { ProjectCompleteStamp } from "@/components/ProjectCompleteStamp";
 import { SectionBackground } from "@/components/ui/SectionBackground";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { ImpactChips } from "@/components/ui/ImpactChips";
 import { withBasePath } from "@/lib/basePath";
 import { getSectionAccent } from "@/lib/sectionAccents";
 import "@/lib/gsap";
@@ -17,6 +19,7 @@ export function Projects() {
   const container = useRef<HTMLDivElement>(null);
   const { data } = useResume();
   const { cinematicEnabled } = useCinematicMotion();
+  const { play } = useGameAudio();
 
   useGSAP(
     () => {
@@ -47,15 +50,16 @@ export function Projects() {
   return (
     <SectionBackground
       id="projects"
-      image="/images/bg-garage.jpg"
+      image="/images/bg-garage.webp"
       opacity="opacity-[0.1] sepia-[0.25]"
       accent={getSectionAccent("projects")}
       className="py-24 md:py-36 px-4 sm:px-6"
     >
       <div ref={container} className="mx-auto max-w-6xl">
         <SectionTitle
-          kicker="Selected Work"
+          kicker="Garage Board"
           title="The Big Scores"
+          plain="Selected projects"
           sectionId="projects"
         />
 
@@ -63,16 +67,22 @@ export function Projects() {
           {data.projects.map((project) => (
             <article
               key={project.id}
-              className="project-card group mission-card overflow-hidden transition-transform duration-300 hover:-translate-y-2"
+              className="project-card group garage-board overflow-hidden"
+              onMouseEnter={() => play("menuMove")}
             >
               <ProjectCompleteStamp projectId={project.id} />
+              <div className="garage-board-rail" aria-hidden>
+                <span />
+                <span />
+                <span />
+              </div>
               <div className="relative h-48 sm:h-52 md:h-60 overflow-hidden border-b border-sand/15">
                 <Image
                   src={withBasePath(project.image)}
                   alt={`${project.name} — GTA San Andreas style artwork`}
                   fill
                   sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover sepia-[0.2] contrast-[1.05] transition-transform duration-700 ease-out group-hover:scale-110"
+                  className="object-cover sepia-[0.2] contrast-[1.05] transition-transform duration-700 ease-out group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-night-2 via-night-2/20 to-transparent" />
                 <p className="gta-title-light absolute bottom-3 left-4 sm:left-6 text-xl sm:text-2xl md:text-3xl text-sunset drop-shadow-[3px_3px_0_rgba(0,0,0,0.8)]">
@@ -88,6 +98,7 @@ export function Projects() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:text-money transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
+                      onFocus={() => play("menuMove")}
                     >
                       {project.name} ↗
                     </a>
@@ -98,6 +109,8 @@ export function Projects() {
                 <p className="mt-1 meta-label tracking-[0.12em]">
                   {project.role} · {project.date}
                 </p>
+
+                <ImpactChips items={project.impact} accent="sunset" />
 
                 <ul className="mt-5 space-y-3">
                   {project.bullets.map((bullet, i) => (
@@ -114,15 +127,29 @@ export function Projects() {
                   ))}
                 </ul>
 
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-black/40 border border-sunset/40 px-3 py-1 text-[0.65rem] font-[family-name:var(--font-oswald)] uppercase tracking-[0.14em] text-sunset"
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <div className="flex flex-wrap gap-2 flex-1">
+                    {project.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="bg-black/40 border border-sunset/40 px-3 py-1 text-[0.65rem] font-[family-name:var(--font-oswald)] uppercase tracking-[0.14em] text-sunset"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 font-[family-name:var(--font-oswald)] uppercase tracking-[0.14em] text-xs border border-money/60 bg-money/15 text-money px-3 py-2 min-h-11 inline-flex items-center hover:bg-money hover:text-night transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
+                      onMouseEnter={() => play("menuMove")}
+                      onClick={() => play("menuSelect")}
                     >
-                      {tag}
-                    </span>
-                  ))}
+                      Open score
+                    </a>
+                  )}
                 </div>
               </div>
             </article>

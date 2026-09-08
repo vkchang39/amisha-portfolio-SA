@@ -6,13 +6,17 @@ import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useResume } from "@/hooks/useResume";
-import { GtaButton } from "@/components/ui/GtaButton";
+import { GtaButtonSound } from "@/components/ui/GtaButtonSound";
+import { CopyButton } from "@/components/ui/CopyButton";
+import { ContactForm } from "@/components/ContactForm";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionBackground } from "@/components/ui/SectionBackground";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useGameAudio } from "@/hooks/useGameAudio";
 import { withBasePath } from "@/lib/basePath";
 import { getSectionAccent } from "@/lib/sectionAccents";
+import { hasContactForm } from "@/lib/siteConfig";
 import "@/lib/gsap";
 
 const PhoneBoothScene = dynamic(
@@ -46,6 +50,7 @@ export function Contact({ year }: { year: number }) {
   const { cinematicEnabled } = useCinematicMotion();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const show3D = cinematicEnabled && !isMobile;
+  const { play } = useGameAudio();
 
   useGSAP(
     () => {
@@ -71,10 +76,17 @@ export function Contact({ year }: { year: number }) {
 
   if (!data) return null;
 
+  const focusEmailCta = () => {
+    play("menuSelect");
+    const cta = document.getElementById("contact-email-cta");
+    cta?.focus();
+    cta?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
+
   return (
     <SectionBackground
       id="contact"
-      image="/images/bg-hills-night.jpg"
+      image="/images/bg-hills-night.webp"
       opacity="opacity-[0.16]"
       accent={getSectionAccent("contact")}
       className="py-28 md:py-44 px-4 sm:px-6 bg-gradient-to-b from-night via-asphalt to-night"
@@ -82,8 +94,17 @@ export function Contact({ year }: { year: number }) {
     >
       <div ref={container} className="relative mx-auto max-w-4xl text-center">
         {show3D ? (
-          <div className="phone-booth-scene-wrap" aria-hidden>
-            <PhoneBoothScene />
+          <div className="phone-booth-scene-wrap">
+            <div className="phone-booth-scene-canvas" aria-hidden>
+              <PhoneBoothScene onActivate={focusEmailCta} />
+            </div>
+            <button
+              type="button"
+              className="phone-booth-activate"
+              onClick={focusEmailCta}
+            >
+              Call booth — focus email CTA
+            </button>
           </div>
         ) : (
           <PhoneBoothFallback />
@@ -103,15 +124,16 @@ export function Contact({ year }: { year: number }) {
         </Reveal>
 
         <Reveal className="mt-10 md:mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
-          <GtaButton
+          <GtaButtonSound
+            id="contact-email-cta"
             href={`mailto:${data.email}`}
             $variant="money"
             aria-label={`Email Amisha Sharma at ${data.email}`}
           >
             send a message
             <span className="cta-hint">Email Amisha</span>
-          </GtaButton>
-          <GtaButton
+          </GtaButtonSound>
+          <GtaButtonSound
             href={withBasePath(data.cvUrl)}
             download
             $variant="blood"
@@ -119,8 +141,8 @@ export function Contact({ year }: { year: number }) {
           >
             download cv
             <span className="cta-hint">Get resume PDF</span>
-          </GtaButton>
-          <GtaButton
+          </GtaButtonSound>
+          <GtaButtonSound
             href={data.linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
@@ -129,15 +151,23 @@ export function Contact({ year }: { year: number }) {
           >
             linkedin
             <span className="cta-hint">Connect on LinkedIn</span>
-          </GtaButton>
+          </GtaButtonSound>
         </Reveal>
+
+        {hasContactForm && (
+          <Reveal className="mt-14 md:mt-16">
+            <div className="mx-auto max-w-3xl text-left">
+              <ContactForm fallbackEmail={data.email} />
+            </div>
+          </Reveal>
+        )}
 
         <Reveal className="mt-14 md:mt-16">
           <div className="mx-auto grid max-w-3xl items-stretch gap-6 md:grid-cols-2 text-left">
             <div className="mission-card group p-3">
               <div className="relative h-full min-h-52 md:min-h-56 overflow-hidden">
                 <Image
-                  src={withBasePath("/images/contact-payphone.jpg")}
+                  src={withBasePath("/images/contact-payphone.webp")}
                   alt="GTA San Andreas style payphone on a Los Santos street"
                   fill
                   sizes="(min-width: 768px) 24rem, 100vw"
@@ -162,12 +192,15 @@ export function Contact({ year }: { year: number }) {
               </div>
               <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4 text-sm">
                 <span className="meta-label">Email</span>
-                <a
-                  href={`mailto:${data.email}`}
-                  className="text-sand hover:text-money transition-colors break-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
-                >
-                  {data.email}
-                </a>
+                <span className="flex items-center gap-2 sm:justify-end">
+                  <a
+                    href={`mailto:${data.email}`}
+                    className="text-sand hover:text-money transition-colors break-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
+                  >
+                    {data.email}
+                  </a>
+                  <CopyButton value={data.email} label="Email address" />
+                </span>
               </div>
               <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4 text-sm">
                 <span className="meta-label">LinkedIn</span>

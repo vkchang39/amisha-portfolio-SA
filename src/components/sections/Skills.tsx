@@ -47,14 +47,19 @@ export function Skills() {
   return (
     <SectionBackground
       id="stats"
-      image="/images/bg-city-night.jpg"
+      image="/images/bg-city-night.webp"
       opacity="opacity-[0.14]"
       accent={getSectionAccent("stats")}
       className="py-24 md:py-36 px-4 sm:px-6 bg-night-2"
       gradientClassName="bg-gradient-to-b from-night-2 via-transparent to-night-2"
     >
       <div className="gym-stats-frame mx-auto max-w-5xl">
-        <SectionTitle kicker="Skills" title="Player Stats" sectionId="stats" />
+        <SectionTitle
+          kicker="Skills"
+          title="Player Stats"
+          plain="Skills & tools"
+          sectionId="stats"
+        />
 
         <div className="gym-stats-header">
           <p className="gym-stats-title meta-label tracking-[0.2em]">PLAYER STATS</p>
@@ -85,6 +90,24 @@ export function Skills() {
             </Reveal>
           ))}
         </div>
+
+        <Reveal className="mt-14 md:mt-20">
+          <div className="loadout-header">
+            <p className="meta-label tracking-[0.2em]">Loadout — How I Work</p>
+            <p className="loadout-plain">
+              Day-to-day tools and rituals, so you know what you&apos;re hiring.
+            </p>
+          </div>
+          <ul className="loadout-grid">
+            {data.loadout.map((item) => (
+              <li key={item.name} className={`loadout-slot loadout-slot-${item.kind}`}>
+                <span className="loadout-kind">{item.kind === "tool" ? "Weapon" : "Ritual"}</span>
+                <span className="loadout-name">{item.name}</span>
+                <span className="loadout-use">{item.use}</span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
 
         <Reveal className="mt-12 md:mt-16">
           <p className="text-center meta-subtle tracking-[0.18em] uppercase">

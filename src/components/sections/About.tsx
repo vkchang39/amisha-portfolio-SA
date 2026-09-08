@@ -5,10 +5,12 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useResume } from "@/hooks/useResume";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { useGameAudio } from "@/hooks/useGameAudio";
 import { BriefingTypewriter } from "@/components/BriefingTypewriter";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionBackground } from "@/components/ui/SectionBackground";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { AvailabilityBadge } from "@/components/ui/AvailabilityBadge";
 import { getSectionAccent } from "@/lib/sectionAccents";
 import { withBasePath } from "@/lib/basePath";
 import Image from "next/image";
@@ -16,7 +18,8 @@ import "@/lib/gsap";
 
 function CounterStat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="mission-card p-5 md:p-6 text-center">
+    <div className="wanted-poster p-5 md:p-6 text-center h-full">
+      <p className="meta-label mb-2 tracking-[0.18em] text-blood/90">Wanted</p>
       <p className="gta-title-light text-4xl sm:text-5xl md:text-6xl text-money">{value}</p>
       <p className="mt-2 meta-label tracking-[0.14em]">{label}</p>
     </div>
@@ -27,6 +30,7 @@ export function About() {
   const container = useRef<HTMLDivElement>(null);
   const { data } = useResume();
   const { cinematicEnabled } = useCinematicMotion();
+  const { play } = useGameAudio();
 
   useGSAP(
     () => {
@@ -56,7 +60,7 @@ export function About() {
   return (
     <SectionBackground
       id="about"
-      image="/images/bg-desert-highway.jpg"
+      image="/images/bg-desert-highway.webp"
       opacity="opacity-[0.1] sepia-[0.3]"
       accent={getSectionAccent("about")}
       className="py-24 md:py-36 px-4 sm:px-6"
@@ -65,15 +69,23 @@ export function About() {
         <SectionTitle
           kicker="The Introduction"
           title="The Story So Far"
+          plain="About Amisha"
           sectionId="about"
         />
 
         <div className="grid gap-10 md:gap-12 md:grid-cols-5 items-start">
           <Reveal className="md:col-span-2" from="left">
-            <div className="mission-card p-3 group">
+            <div
+              className="wanted-poster group"
+              onMouseEnter={() => play("menuMove")}
+            >
+              <div className="wanted-poster-banner">
+                <span>Suspect Profile</span>
+                <span>Los Santos PD</span>
+              </div>
               <div className="relative overflow-hidden min-h-[220px]">
                 <Image
-                  src={withBasePath("/images/about-portrait.jpg")}
+                  src={withBasePath("/images/about-portrait.webp")}
                   alt="Amisha Sharma — GTA San Andreas style portrait art"
                   width={819}
                   height={546}
@@ -85,17 +97,25 @@ export function About() {
                   The Coordinator
                 </p>
               </div>
-              <p className="px-2 pt-3 pb-1 text-center meta-subtle tracking-[0.14em] uppercase">
-                Los Santos · Last seen shipping on time
+              <p className="px-3 pt-3 pb-3 text-center meta-subtle tracking-[0.14em] uppercase">
+                Last seen shipping on time · Reward: hire
               </p>
             </div>
           </Reveal>
 
           <Reveal className="md:col-span-3" from="right">
-            <BriefingTypewriter text={data.summary} />
-            <p className="mt-6 meta-label text-money tracking-[0.12em]">
-              &ldquo;Ah shit, here we go again&rdquo; — every sprint planning, ever.
-            </p>
+            <div className="briefing-sheet">
+              <p className="meta-label mb-4 tracking-[0.16em] text-money">
+                Mission Briefing
+              </p>
+              <BriefingTypewriter text={data.summary} />
+              <div className="mt-5">
+                <AvailabilityBadge availability={data.availability} />
+              </div>
+              <p className="mt-6 meta-label text-money tracking-[0.12em]">
+                &ldquo;Ah shit, here we go again&rdquo; — every sprint planning, ever.
+              </p>
+            </div>
 
             <div className="mission-card mt-8 p-5 md:p-6">
               <p className="meta-label mb-4">Core Competencies</p>
@@ -103,7 +123,8 @@ export function About() {
                 {data.competencies.map((item) => (
                   <li
                     key={item}
-                    className="border border-sand/25 px-3 py-1.5 text-xs font-[family-name:var(--font-oswald)] uppercase tracking-wide text-sand/90"
+                    className="border border-sand/25 px-3 py-1.5 text-xs font-[family-name:var(--font-oswald)] uppercase tracking-wide text-sand/90 transition-colors hover:border-money/50 hover:text-money"
+                    onMouseEnter={() => play("menuMove")}
                   >
                     {item}
                   </li>

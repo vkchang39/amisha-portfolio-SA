@@ -1,3 +1,9 @@
+/** A quantified outcome shown as a metric chip (e.g. value "20%", label "faster delivery"). */
+export interface ImpactMetric {
+  value: string;
+  label: string;
+}
+
 export interface ExperienceEntry {
   id: string;
   company: string;
@@ -6,6 +12,8 @@ export interface ExperienceEntry {
   period: string;
   bullets: string[];
   respect: number;
+  /** Headline numbers recruiters scan for. Keep to 2–3 per role. */
+  impact?: ImpactMetric[];
 }
 
 export interface ProjectEntry {
@@ -18,6 +26,22 @@ export interface ProjectEntry {
   image: string;
   bullets: string[];
   tags: string[];
+  impact?: ImpactMetric[];
+}
+
+/** Current hiring status shown in the Hero and About. */
+export interface Availability {
+  status: string;
+  roles: string;
+  location: string;
+  notice: string;
+}
+
+/** "How I work" — a loadout slot: the tool or ritual and what it's used for. */
+export interface LoadoutItem {
+  name: string;
+  use: string;
+  kind: "tool" | "ritual";
 }
 
 export interface EducationEntry {
@@ -44,6 +68,8 @@ export interface Resume {
   linkedinUrl: string;
   summary: string;
   cvUrl: string;
+  availability: Availability;
+  loadout: LoadoutItem[];
   stats: { label: string; value: string }[];
   experience: ExperienceEntry[];
   projects: ProjectEntry[];
@@ -60,6 +86,23 @@ export const resume: Resume = {
   linkedin: "linkedin.com/in/amisha-sharma-442aa81a0",
   linkedinUrl: "https://linkedin.com/in/amisha-sharma-442aa81a0",
   cvUrl: "/Amisha_Sharma_CV.pdf",
+  // TODO(Amisha): confirm notice period and preferred locations.
+  availability: {
+    status: "Open to work",
+    roles: "IT Project Coordinator · Junior PM · Scrum Master",
+    location: "India · Remote-friendly",
+    notice: "Notice period: 30 days",
+  },
+  loadout: [
+    { name: "Jira", use: "Sprint boards, backlog grooming, burndown", kind: "tool" },
+    { name: "Confluence / Docs", use: "SRS, BRD, release notes", kind: "tool" },
+    { name: "Figma", use: "Flow reviews and handoff to dev", kind: "tool" },
+    { name: "Gantt / WBS", use: "Timeline and dependency planning", kind: "tool" },
+    { name: "Excel / Sheets", use: "Budget, resource and risk logs", kind: "tool" },
+    { name: "Daily standup", use: "Blockers surfaced before they cost a day", kind: "ritual" },
+    { name: "Sprint review + retro", use: "Demo to stakeholders, tune the process", kind: "ritual" },
+    { name: "UAT sign-off", use: "No deploy without client acceptance", kind: "ritual" },
+  ],
   summary:
     "IT Project Coordinator with 1.6 years of experience managing web, mobile, and enterprise software projects across Agile and Waterfall environments. Experienced in SDLC coordination, stakeholder communication, sprint planning, and cross-functional team management. Delivered enterprise-grade solutions including a CERT-IN aligned DMS platform and mobile applications for high-growth brands.",
   stats: [
@@ -76,6 +119,12 @@ export const resume: Resume = {
       location: "India",
       period: "August 2025 — Present",
       respect: 100,
+      // TODO(Amisha): replace with real on-time %, budget, and team-size figures.
+      impact: [
+        { value: "5+", label: "concurrent projects" },
+        { value: "7", label: "tech stacks shipped" },
+        { value: "3", label: "teams coordinated" },
+      ],
       bullets: [
         "Delivered 5+ concurrent projects end-to-end, coordinating teams across development, design, and QA using Agile/Scrum and Waterfall frameworks.",
         "Delivered solutions on Laravel, Node.js, React, React Native, WordPress, Shopify, and WIX with database build-out and API integrations.",
@@ -89,6 +138,10 @@ export const resume: Resume = {
       location: "India",
       period: "November 2024 — July 2025",
       respect: 85,
+      impact: [
+        { value: "10+", label: "projects planned" },
+        { value: "20%", label: "faster delivery" },
+      ],
       bullets: [
         "Managed project timelines for 10+ web and mobile projects using WBS and Gantt charts, improving delivery efficiency by 20 percent.",
         "Deployed solutions on React, React Native, WordPress, Shopify, and WIX with database development and API integration.",
@@ -116,7 +169,11 @@ export const resume: Resume = {
       role: "IT Project Coordinator · Government Organization",
       date: "May 2025",
       link: "https://megadocs.in/",
-      image: "/images/project-dms.jpg",
+      image: "/images/project-dms.webp",
+      impact: [
+        { value: "CERT-IN", label: "security track" },
+        { value: "5-tier", label: "role hierarchy" },
+      ],
       bullets: [
         "Built a secure Document Management System for a government organization, currently undergoing CERT-IN certification, featuring a multi-tier user role hierarchy (Super Admin down to Viewer).",
         "Designed a complete document workflow engine with Submit → Review → Approve/Reject cycles, bulk ZIP uploads, CSV metadata templates, and auto-suggestion features.",
@@ -131,7 +188,8 @@ export const resume: Resume = {
       role: "IT Project Coordinator",
       date: "April 2025",
       link: "https://www.dlfltd.in/",
-      image: "/images/project-dlf.jpg",
+      image: "/images/project-dlf.webp",
+      impact: [{ value: "10+", label: "member team" }],
       bullets: [
         "Managed end-to-end coordination and delivery activities with a 10+ member team.",
         "Led project planning, requirement gathering, stakeholder communication, and SDLC execution.",
@@ -145,7 +203,7 @@ export const resume: Resume = {
       codename: "CLUCKIN' BELL RUN",
       role: "IT Project Coordinator",
       date: "February 2025",
-      image: "/images/project-coffee.jpg",
+      image: "/images/project-coffee.webp",
       bullets: [
         "Coordinated end-to-end development and delivery of a cafe membership mobile app using Flutter and Laravel.",
         "Implemented location-based cafe filtering to help users discover nearby partner cafes.",
@@ -159,7 +217,8 @@ export const resume: Resume = {
       codename: "SHARK TANK SPECIAL",
       role: "IT Project Coordinator",
       date: "November 2024",
-      image: "/images/project-godevil.jpg",
+      image: "/images/project-godevil.webp",
+      impact: [{ value: "Shark Tank", label: "India 2025 feature" }],
       bullets: [
         "Developed a mobile application for an established Shopify business, later featured on Shark Tank India 2025.",
         "Managed development using React, React Native, Node.js, Caddy, MySQL, and Microsoft Azure.",

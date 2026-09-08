@@ -9,6 +9,7 @@ import { useGameUi } from "@/context/GameUiContext";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
 import { SectionBackground } from "@/components/ui/SectionBackground";
 import { SectionTitle } from "@/components/ui/SectionTitle";
+import { ImpactChips } from "@/components/ui/ImpactChips";
 import { getSectionAccent } from "@/lib/sectionAccents";
 import "@/lib/gsap";
 
@@ -81,6 +82,19 @@ export function Missions() {
             }
           );
         }
+
+        const board = entry.querySelector(".mission-briefing-board");
+        if (board) {
+          ScrollTrigger.create({
+            trigger: entry,
+            start: "top 70%",
+            end: "bottom 45%",
+            onEnter: () => board.classList.add("mission-briefing-focus"),
+            onEnterBack: () => board.classList.add("mission-briefing-focus"),
+            onLeave: () => board.classList.remove("mission-briefing-focus"),
+            onLeaveBack: () => board.classList.remove("mission-briefing-focus"),
+          });
+        }
       });
 
       gsap.fromTo(
@@ -107,7 +121,7 @@ export function Missions() {
   return (
     <SectionBackground
       id="missions"
-      image="/images/bg-grove-street.jpg"
+      image="/images/bg-grove-street.webp"
       opacity="opacity-[0.13] sepia-[0.3]"
       accent={getSectionAccent("missions")}
       className="py-24 md:py-36 px-4 sm:px-6 bg-night-2"
@@ -117,6 +131,7 @@ export function Missions() {
         <SectionTitle
           kicker="Work Experience"
           title="Missions Passed"
+          plain="Work experience"
           sectionId="missions"
         />
 
@@ -140,12 +155,13 @@ export function Missions() {
                   aria-hidden
                 />
 
-                <div className="mission-card p-6 md:p-8">
+                <div className="mission-card mission-briefing-board p-6 md:p-8">
                   <div className="mission-stamp gta-title-light text-money text-xl sm:text-2xl md:text-3xl mb-4">
                     Mission Passed!
                   </div>
                   <p className="meta-label text-sunset mb-1 tracking-[0.14em]">
-                    {job.period} · {job.location}
+                    Briefing #{String(i + 1).padStart(2, "0")} · {job.period} ·{" "}
+                    {job.location}
                   </p>
                   <h3 className="font-[family-name:var(--font-oswald)] text-xl sm:text-2xl font-semibold text-sand uppercase tracking-wide">
                     {job.role}
@@ -153,6 +169,7 @@ export function Missions() {
                   <p className="meta-subtle font-[family-name:var(--font-oswald)] uppercase tracking-wide text-sm mb-5">
                     {job.company}
                   </p>
+                  <ImpactChips items={job.impact} />
                   <ul className="space-y-3">
                     {job.bullets.map((bullet, j) => (
                       <li
