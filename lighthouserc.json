@@ -20,7 +20,6 @@
         "list": ["error", { "minScore": 1 }],
         "listitem": ["error", { "minScore": 1 }],
 
-        // GH Actions runners are CPU-starved; keep perf as soft signal only.
         "resource-summary:image:size": ["warn", { "maxNumericValue": 900000 }],
         "resource-summary:script:size": ["warn", { "maxNumericValue": 700000 }],
         "resource-summary:font:size": ["warn", { "maxNumericValue": 150000 }],
