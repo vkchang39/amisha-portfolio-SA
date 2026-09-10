@@ -128,7 +128,6 @@ export function Contact({ year }: { year: number }) {
             id="contact-email-cta"
             href={`mailto:${data.email}`}
             $variant="money"
-            aria-label={`send a message — email ${data.email}`}
           >
             send a message
             <span className="cta-hint" aria-hidden>
@@ -139,7 +138,6 @@ export function Contact({ year }: { year: number }) {
             href={withBasePath(data.cvUrl)}
             download
             $variant="blood"
-            aria-label="download cv — Amisha Sharma resume PDF"
           >
             download cv
             <span className="cta-hint" aria-hidden>
@@ -151,7 +149,6 @@ export function Contact({ year }: { year: number }) {
             target="_blank"
             rel="noopener noreferrer"
             $variant="sand"
-            aria-label="linkedin — Amisha Sharma profile"
           >
             linkedin
             <span className="cta-hint" aria-hidden>

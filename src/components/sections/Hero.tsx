@@ -199,11 +199,7 @@ export function Hero() {
 
         <div className="mt-8 md:mt-10 flex flex-wrap items-center justify-center gap-4 sm:gap-5">
           <span className="hero-cta">
-            <GtaButtonSound
-              href="#missions"
-              $variant="money"
-              aria-label="start missions — view experience"
-            >
+            <GtaButtonSound href="#missions" $variant="money">
               start missions
               <span className="cta-hint" aria-hidden>
                 View experience
@@ -215,7 +211,6 @@ export function Hero() {
               href={withBasePath(data.cvUrl)}
               download
               $variant="sand"
-              aria-label="download cv — Amisha Sharma resume PDF"
             >
               download cv
               <span className="cta-hint" aria-hidden>

@@ -83,11 +83,13 @@ function RadioHudPanel({ stationIndex }: { stationIndex: number }) {
         type="button"
         className="radio-hud-toggle"
         aria-expanded={radioExpanded}
-        aria-label={`${station.name} — ${radioExpanded ? "collapse" : "expand"} radio`}
         onClick={() => setRadioExpanded(!radioExpanded)}
       >
         <RadioIcon />
         <span className="radio-hud-station-name">{station.name}</span>
+        <span className="sr-only">
+          {radioExpanded ? ", collapse radio" : ", expand radio"}
+        </span>
       </button>
 
       {radioExpanded && (

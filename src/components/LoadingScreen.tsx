@@ -86,7 +86,7 @@ export function LoadingScreen() {
       className="loading-screen fixed inset-0 z-[var(--z-loading)] bg-black"
       role="status"
       aria-live="polite"
-      aria-label="Loading portfolio"
+      aria-busy="true"
     >
       <div
         className={`loading-splash ${reducedMotion ? "" : "loading-splash-animated"}`}

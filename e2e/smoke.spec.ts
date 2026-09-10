@@ -3,10 +3,8 @@ import { expect, test, type Page } from "@playwright/test";
 /** Wait for the SA loading screen to finish and the game UI to mount. */
 async function waitForGameReady(page: Page) {
   await page.goto("/");
-  await expect(page.getByRole("status", { name: "Loading portfolio" })).toBeHidden({
-    timeout: 15_000,
-  });
-  await expect(page.getByRole("link", { name: "Download CV (PDF)" })).toBeVisible();
+  await expect(page.locator(".loading-screen")).toHaveCount(0, { timeout: 15_000 });
+  await expect(page.getByRole("link", { name: /CV.*PDF/i }).first()).toBeVisible();
 }
 
 test("loading screen finishes and hero renders", async ({ page }) => {
@@ -56,7 +54,7 @@ test("plain section labels are on by default and can be toggled off", async ({ p
 
 test("CV download links point at the PDF", async ({ page }) => {
   await waitForGameReady(page);
-  const hudCv = page.getByRole("link", { name: "Download CV (PDF)" });
+  const hudCv = page.getByRole("link", { name: /CV.*PDF/i }).first();
   await expect(hudCv).toHaveAttribute("href", /Amisha_Sharma_CV\.pdf$/);
   await expect(hudCv).toHaveAttribute("download", "");
   const res = await page.request.get((await hudCv.getAttribute("href")) ?? "");

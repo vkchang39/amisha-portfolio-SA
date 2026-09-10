@@ -68,12 +68,12 @@ export function HudCvButton() {
       href={withBasePath(data.cvUrl)}
       download
       className="game-hud-cv"
-      aria-label="Download CV (PDF)"
     >
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
         <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       <span>CV</span>
+      <span className="sr-only"> download (PDF)</span>
     </a>
   );
 }

@@ -86,13 +86,13 @@ export function Nav() {
         <a
           href="#top"
           className="gta-title-light text-2xl text-sand hover:text-money transition-colors min-h-11 min-w-11 inline-flex items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
-          aria-label="AS — Amisha Sharma, back to top"
           onClick={(e) => {
             e.preventDefault();
             goTo("top");
           }}
         >
           AS
+          <span className="sr-only"> — Amisha Sharma, back to top</span>
         </a>
 
         <ul className="hidden md:flex items-center gap-6 lg:gap-8">
@@ -130,10 +130,9 @@ export function Nav() {
             className="md:hidden min-h-11 min-w-11 inline-flex items-center justify-center border border-sand/30 text-sand hover:text-money hover:border-money transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
             onClick={() => setMenuOpen((open) => !open)}
           >
-            <span className="sr-only">{menuOpen ? "Close" : "Menu"}</span>
+            <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
             <svg
               width="20"
               height="20"

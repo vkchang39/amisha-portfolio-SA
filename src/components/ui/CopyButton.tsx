@@ -33,9 +33,9 @@ export function CopyButton({ value, label }: { value: string; label: string }) {
       type="button"
       className={`copy-btn ${copied ? "copy-btn-done" : ""}`}
       onClick={copy}
-      aria-label={copied ? `${label} copied` : `Copy ${label}`}
     >
       {copied ? "Copied" : "Copy"}
+      <span className="sr-only"> {label}</span>
       <span className="sr-only" role="status" aria-live="polite">
         {copied ? `${label} copied to clipboard` : ""}
       </span>
