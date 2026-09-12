@@ -44,12 +44,34 @@ test("plain section labels are on by default and can be toggled off", async ({ p
   await plainLabel.scrollIntoViewIfNeeded();
   await expect(plainLabel).toBeVisible();
 
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  const missionsNav = nav.getByRole("link", { name: /Missions[\s\S]*Work experience/i });
+  if (!(await missionsNav.isVisible())) {
+    await page.getByRole("button", { name: /Open menu/i }).click();
+  }
+  await expect(missionsNav).toBeVisible();
+  const closeMenu = page.getByRole("button", { name: /Close menu/i });
+  if (await closeMenu.isVisible()) {
+    await closeMenu.click();
+  }
+
   await page.keyboard.press("Escape");
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: /Plain section labels: On/ }).click();
   await page.keyboard.press("Escape");
   await page.keyboard.press("Escape");
   await expect(plainLabel).toHaveCount(0);
+  await expect(page.locator(".nav-link-plain")).toHaveCount(0);
+});
+
+test("pause settings lists controls including HIREME", async ({ page }) => {
+  await waitForGameReady(page);
+  await page.keyboard.press("Escape");
+  await page.getByRole("menuitem", { name: "Settings" }).click();
+  const dialog = page.getByRole("dialog", { name: "Pause menu" });
+  await expect(dialog.getByText("Controls")).toBeVisible();
+  await expect(dialog.getByText(/HIREME/)).toBeVisible();
+  await expect(dialog.getByText(/Download CV/i)).toBeVisible();
 });
 
 test("CV download links point at the PDF", async ({ page }) => {

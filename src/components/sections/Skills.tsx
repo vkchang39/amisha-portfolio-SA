@@ -101,7 +101,7 @@ export function Skills() {
           <ul className="loadout-grid">
             {data.loadout.map((item) => (
               <li key={item.name} className={`loadout-slot loadout-slot-${item.kind}`}>
-                <span className="loadout-kind">{item.kind === "tool" ? "Weapon" : "Ritual"}</span>
+                <span className="loadout-kind">{item.kind === "tool" ? "Tool" : "Ritual"}</span>
                 <span className="loadout-name">{item.name}</span>
                 <span className="loadout-use">{item.use}</span>
               </li>

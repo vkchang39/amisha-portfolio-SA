@@ -276,6 +276,21 @@ function PauseMenuPanel() {
                 ? "Reduced motion is enabled in your system settings."
                 : "Toggle animations off to skip scroll effects site-wide."}
             </p>
+            <p className="meta-label mt-5 mb-2 tracking-[0.14em]">Controls</p>
+            <ul className="pause-menu-controls">
+              <li>
+                <kbd>Esc</kbd> Pause / resume
+              </li>
+              <li>
+                <kbd>M</kbd> Map
+              </li>
+              <li>
+                <kbd>R</kbd> Radio
+              </li>
+              <li>
+                <kbd>HIREME</kbd> Download CV
+              </li>
+            </ul>
             <button
               type="button"
               className="pause-menu-settings-btn mt-3"

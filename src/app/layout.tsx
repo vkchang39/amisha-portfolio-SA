@@ -32,7 +32,7 @@ const sourceSans = Source_Sans_3({
 const SITE_TITLE =
   "Amisha Sharma — IT Project Coordinator | San Andreas Edition";
 const SITE_DESCRIPTION =
-  "Portfolio of Amisha Sharma, IT Project Coordinator. Grove Street. Home. Missions delivered, respect earned.";
+  "Amisha Sharma — IT Project Coordinator. Agile/SDLC delivery across web, mobile, and enterprise (CERT-IN DMS, high-growth apps). San Andreas Edition.";
 const OG_IMAGE = `${SITE_URL}/images/og-share.jpg?v=2`;
 
 export const viewport: Viewport = {
@@ -57,6 +57,10 @@ export const metadata: Metadata = {
   keywords: [
     "Amisha Sharma",
     "IT Project Coordinator",
+    "Junior Project Manager",
+    "Scrum Master",
+    "Agile",
+    "SDLC",
     "portfolio",
     "project management",
     "GTA San Andreas",

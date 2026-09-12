@@ -115,11 +115,11 @@ export function Contact({ year }: { year: number }) {
         </p>
         <Reveal>
           <p className="meta-label tracking-[0.2em] text-sand/85 text-sm md:text-base">
-            Nah. Just one mission away from your next great hire.
+            Ready to coordinate your next project — get in touch.
           </p>
           <p className="mt-6 text-sand/80 max-w-xl mx-auto leading-relaxed">
-            Looking for someone to coordinate your next project from kickoff to
-            deployment? Hit me up — respawn is instant.
+            Looking for an IT Project Coordinator from kickoff to deployment?
+            Email, LinkedIn, or grab the CV — respawn is instant.
           </p>
         </Reveal>
 
@@ -130,9 +130,7 @@ export function Contact({ year }: { year: number }) {
             $variant="money"
           >
             send a message
-            <span className="cta-hint" aria-hidden>
-              Email Amisha
-            </span>
+            <span className="cta-hint">Email Amisha</span>
           </GtaButtonSound>
           <GtaButtonSound
             href={withBasePath(data.cvUrl)}
@@ -140,9 +138,7 @@ export function Contact({ year }: { year: number }) {
             $variant="blood"
           >
             download cv
-            <span className="cta-hint" aria-hidden>
-              Get resume PDF
-            </span>
+            <span className="cta-hint">Get resume PDF</span>
           </GtaButtonSound>
           <GtaButtonSound
             href={data.linkedinUrl}
@@ -151,9 +147,7 @@ export function Contact({ year }: { year: number }) {
             $variant="sand"
           >
             linkedin
-            <span className="cta-hint" aria-hidden>
-              Connect on LinkedIn
-            </span>
+            <span className="cta-hint">Connect on LinkedIn</span>
           </GtaButtonSound>
         </Reveal>
 

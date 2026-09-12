@@ -201,9 +201,7 @@ export function Hero() {
           <span className="hero-cta">
             <GtaButtonSound href="#missions" $variant="money">
               start missions
-              <span className="cta-hint" aria-hidden>
-                View experience
-              </span>
+              <span className="cta-hint">View experience</span>
             </GtaButtonSound>
           </span>
           <span className="hero-cta">
@@ -213,9 +211,7 @@ export function Hero() {
               $variant="sand"
             >
               download cv
-              <span className="cta-hint" aria-hidden>
-                Get resume PDF
-              </span>
+              <span className="cta-hint">Get resume PDF</span>
             </GtaButtonSound>
           </span>
         </div>

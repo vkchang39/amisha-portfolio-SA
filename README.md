@@ -45,7 +45,8 @@ pnpm generate:icons   # Rasterise src/app/icon.svg → PNG icons
 
 ### Optional integrations
 
-Copy `.env.example` to `.env.local`. Everything degrades gracefully when unset.
+Copy `.env.example` to `.env.local`. Everything degrades gracefully when unset
+(mailto / LinkedIn / CV still work; no form UI; no analytics script).
 
 | Variable                      | Effect                                                  |
 | ----------------------------- | ------------------------------------------------------- |
@@ -53,14 +54,22 @@ Copy `.env.example` to `.env.local`. Everything degrades gracefully when unset.
 | `NEXT_PUBLIC_FORM_ACCESS_KEY` | Web3Forms access key (omit for Formspree)               |
 | `NEXT_PUBLIC_GOATCOUNTER`     | Loads cookieless GoatCounter analytics for that site    |
 
-For the deployed site, set the same names as repository **Variables**
-(Settings → Secrets and variables → Actions); the workflow passes them to the build.
+**Live site checklist**
+
+1. Repo → **Settings → Secrets and variables → Actions → Variables**
+2. Add the three names above (endpoint + optional access key + GoatCounter code)
+3. Push to `main` (or **Actions → Deploy → Run workflow**) so the `build` job
+   bakes them into the static export
+4. Confirm: Contact shows the form; network tab shows a GoatCounter request
+
+Until Variables are set and a deploy finishes, production stays mailto-only with
+no analytics — by design.
 
 ## Deploy
 
 Pushes to `main` run `.github/workflows/deploy-github-pages.yml`:
 
-1. `check` — typecheck, lint, Playwright smoke tests, Lighthouse budgets
+1. `check` — typecheck, lint, Playwright smoke tests, Lighthouse (desktop hard + mobile warn)
 2. `build` — `next build` with `GITHUB_PAGES=true` (sets `basePath`)
 3. `deploy` — GitHub Pages
 

@@ -11,10 +11,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - When improving UI/UX, preserve the GTA San Andreas visual identity (Pricedown font, palette, loading-screen art, HUD language).
 - Prefer balanced recruiter clarity plus cinematic game theme over pure immersion or pure professionalism.
 - Prefer systematic polish (accessibility, mobile nav, motion sync, performance, CTA clarity) over aggressive restructure or effects-first changes.
-- Use original San Andreas loading-screen-style generated artwork; do not use actual Rockstar copyrighted game screenshots or official art.
+- Use original San Andreas loading-screen-style generated artwork (including the boot LoadingScreen background); do not use actual Rockstar copyrighted game screenshots or official art.
 - Preferred stack for this project: Three.js/R3F, GSAP, Lenis, styled-components, Tailwind CSS, TanStack Query, TypeScript.
 - Keep mission-passed and game-saved overlays very brief (~0.5–1s) so they never block the page.
-- Prefer GTA SA-styled custom cursors and procedural hero 3D that reads as an unmistakable SA loading-screen / Los Santos drive (layered depth, skyline, highway)—not generic glossy WebGL.
+- Prefer GTA SA-styled custom cursors and procedural hero 3D that reads as an unmistakable SA loading-screen / Los Santos drive (layered depth, skyline, highway, non-boxy detail)—not generic glossy WebGL.
 - Prefer site-wide SA interaction FX (e.g. click bursts) over hero-only effects; skip buttons, links, and pause/map overlays.
 - Respect pause-menu Animations Off / reduced-motion gates across Lenis, marquees, SFX, and WebGL.
 
@@ -23,7 +23,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Personal portfolio site for Amisha Sharma (IT Project Coordinator).
 - Next.js 16.2.9 with React 19; resume data in `src/lib/resume.ts`; downloadable CV at `public/Amisha_Sharma_CV.pdf` (static file; no resume API route).
 - Sections use GTA metaphors: Missions (experience), Projects, Stats/Skills, Education, Contact.
-- Section backgrounds use SA loading-screen-style JPEG art in `public/images/` at low opacity with gradient overlays.
+- Section backgrounds use SA loading-screen-style WebP art in `public/images/` at low opacity with gradient overlays; boot LoadingScreen uses `loading-sa-collage.webp`.
 - Game UI layer includes persistent HUD, ESC pause menu, mission-passed overlays, map screen, radio HUD, and page-wide click bursts via `GameUiContext`.
 - Pricedown (`public/fonts/pricedown.woff`) is the primary GTA display typeface; UI body uses Source Sans 3 with Oswald accents.
 - Static-exported for GitHub Pages (`output: "export"`); live at https://vkchang39.github.io/amisha-portfolio-SA/ with `basePath` when `GITHUB_PAGES=true`.

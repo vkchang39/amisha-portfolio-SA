@@ -12,6 +12,7 @@
     "generate:icons": "node scripts/generate-icons.mjs",
     "test:e2e": "playwright test",
     "lighthouse": "lhci autorun",
+    "lighthouse:mobile": "lhci autorun --config=lighthouserc.mobile.json",
     "check": "pnpm typecheck && pnpm lint"
   },
   "dependencies": {

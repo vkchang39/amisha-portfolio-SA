@@ -596,6 +596,22 @@ section[id] {
   color: var(--color-money) !important;
 }
 
+.nav-link-plain {
+  display: block;
+  margin-top: 0.15rem;
+  font-family: var(--font-source-sans), sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  line-height: 1.2;
+  color: var(--text-muted, rgba(232, 213, 160, 0.7));
+}
+
+.nav-link-active .nav-link-plain {
+  color: color-mix(in srgb, var(--color-money) 75%, transparent);
+}
+
 /* CTA dual-label hint */
 .cta-hint {
   display: block;

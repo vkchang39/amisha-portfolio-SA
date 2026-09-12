@@ -99,6 +99,34 @@
   outline-offset: 2px;
 }
 
+.pause-menu-controls {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-family: var(--font-source-sans), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted, rgba(232, 213, 160, 0.75));
+}
+
+.pause-menu-controls kbd {
+  display: inline-block;
+  min-width: 4.5rem;
+  padding: 0 0.35em;
+  margin-right: 0.35em;
+  font-family: var(--font-oswald), sans-serif;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--color-sand, #e8d5a0);
+  border: 1px solid rgba(232, 213, 160, 0.4);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.35);
+}
+
 .pause-menu-hint kbd {
   display: inline-block;
   padding: 0 0.35em;

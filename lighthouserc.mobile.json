@@ -1,0 +1,62 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./out",
+      "url": ["http://localhost/index.html"],
+      "numberOfRuns": 1,
+      "settings": {
+        "formFactor": "mobile",
+        "screenEmulation": {
+          "mobile": true,
+          "width": 360,
+          "height": 640,
+          "deviceScaleFactor": 2,
+          "disabled": false
+        },
+        "skipAudits": ["uses-http2", "is-on-https"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["warn", { "minScore": 0.9 }],
+        "categories:seo": ["warn", { "minScore": 0.9 }],
+        "categories:best-practices": ["warn", { "minScore": 0.85 }],
+        "categories:performance": ["warn", { "minScore": 0.4 }],
+
+        "label-content-name-mismatch": ["warn", { "minScore": 1 }],
+        "list": ["warn", { "minScore": 1 }],
+        "listitem": ["warn", { "minScore": 1 }],
+
+        "resource-summary:image:size": ["warn", { "maxNumericValue": 900000 }],
+        "resource-summary:script:size": ["warn", { "maxNumericValue": 700000 }],
+        "resource-summary:total:size": ["warn", { "maxNumericValue": 1800000 }],
+        "cumulative-layout-shift": ["warn", { "maxNumericValue": 0.15 }],
+        "largest-contentful-paint": ["warn", { "maxNumericValue": 6000 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 30000 }],
+
+        "errors-in-console": "warn",
+        "render-blocking-resources": "warn",
+        "total-byte-weight": "warn",
+        "speed-index": "off",
+        "interactive": "off",
+        "bootup-time": "off",
+        "mainthread-work-breakdown": "off",
+        "dom-size": "off",
+        "max-potential-fid": "off",
+        "unused-javascript": "off",
+        "unused-css-rules": "off",
+        "uses-responsive-images": "off",
+        "offscreen-images": "off",
+        "unsized-images": "off",
+        "non-composited-animations": "off",
+        "bf-cache": "off",
+        "csp-xss": "off",
+        "valid-source-maps": "off"
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci/report-mobile"
+    }
+  }
+}

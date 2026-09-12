@@ -61,8 +61,14 @@ jobs:
           retention-days: 7
 
       # Reuses the `out/` folder Playwright just built. Budgets live in lighthouserc.json.
-      - name: Lighthouse budgets
+      - name: Lighthouse budgets (desktop)
         run: pnpm lighthouse
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      # Warn-only mobile pass — surfaces regressions without failing the job.
+      - name: Lighthouse budgets (mobile, warn)
+        run: pnpm lighthouse:mobile
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 

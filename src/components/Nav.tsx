@@ -5,17 +5,17 @@ import { useGameUi } from "@/context/GameUiContext";
 import { withBasePath } from "@/lib/basePath";
 
 const LINKS = [
-  { href: "#missions", label: "Missions", id: "missions" },
-  { href: "#projects", label: "Projects", id: "projects" },
-  { href: "#stats", label: "Stats", id: "stats" },
-  { href: "#education", label: "Education", id: "education" },
-  { href: "#contact", label: "Contact", id: "contact" },
+  { href: "#missions", label: "Missions", plain: "Work experience", id: "missions" },
+  { href: "#projects", label: "Projects", plain: "Selected projects", id: "projects" },
+  { href: "#stats", label: "Stats", plain: "Skills & tools", id: "stats" },
+  { href: "#education", label: "Education", plain: "Education", id: "education" },
+  { href: "#contact", label: "Contact", plain: "Contact", id: "contact" },
 ] as const;
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { activeSection, navigateToSection } = useGameUi();
+  const { activeSection, navigateToSection, plainLabels } = useGameUi();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -65,11 +65,20 @@ export function Nav() {
   }, [menuOpen, closeMenu]);
 
   const linkClass = (id: string) =>
-    `font-[family-name:var(--font-oswald)] uppercase tracking-[0.14em] text-sm min-h-11 min-w-11 inline-flex items-center transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money ${
+    `nav-link font-[family-name:var(--font-oswald)] uppercase tracking-[0.14em] text-sm min-h-11 min-w-11 inline-flex flex-col justify-center transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-money ${
       activeSection === id
         ? "text-money nav-link-active"
         : "text-sand/80 hover:text-money"
     }`;
+
+  const renderLinkLabel = (link: (typeof LINKS)[number]) => (
+    <>
+      <span className="nav-link-game">{link.label}</span>
+      {plainLabels && link.plain !== link.label && (
+        <span className="nav-link-plain">{link.plain}</span>
+      )}
+    </>
+  );
 
   return (
     <header
@@ -95,7 +104,7 @@ export function Nav() {
           <span className="sr-only"> — Amisha Sharma, back to top</span>
         </a>
 
-        <ul className="hidden md:flex items-center gap-6 lg:gap-8">
+        <ul className="hidden md:flex items-center gap-5 lg:gap-7">
           {LINKS.map((link) => (
             <li key={link.href}>
               <a
@@ -106,7 +115,7 @@ export function Nav() {
                   goTo(link.id);
                 }}
               >
-                {link.label}
+                {renderLinkLabel(link)}
               </a>
             </li>
           ))}
@@ -163,13 +172,13 @@ export function Nav() {
               <li key={link.href}>
                 <a
                   href={link.href}
-                  className={`${linkClass(link.id)} w-full py-2`}
+                  className={`${linkClass(link.id)} w-full items-start py-2`}
                   onClick={(e) => {
                     e.preventDefault();
                     goTo(link.id);
                   }}
                 >
-                  {link.label}
+                  {renderLinkLabel(link)}
                 </a>
               </li>
             ))}
@@ -178,7 +187,6 @@ export function Nav() {
                 href={withBasePath("/Amisha_Sharma_CV.pdf")}
                 download
                 className="font-[family-name:var(--font-oswald)] uppercase tracking-[0.12em] text-xs bg-money text-night px-4 py-3 min-h-11 inline-flex items-center w-full justify-center hover:bg-sand transition-colors"
-                onClick={closeMenu}
               >
                 Download CV
               </a>
