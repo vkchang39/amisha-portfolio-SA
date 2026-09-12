@@ -17,6 +17,7 @@ import { useGameAudio } from "@/hooks/useGameAudio";
 import { withBasePath } from "@/lib/basePath";
 import { getSectionAccent } from "@/lib/sectionAccents";
 import { hasContactForm } from "@/lib/siteConfig";
+import { useNearViewport } from "@/hooks/useNearViewport";
 import "@/lib/gsap";
 
 const PhoneBoothScene = dynamic(
@@ -51,6 +52,7 @@ export function Contact({ year }: { year: number }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const show3D = cinematicEnabled && !isMobile;
   const { play } = useGameAudio();
+  const [boothHostRef, boothNear] = useNearViewport<HTMLDivElement>();
 
   useGSAP(
     () => {
@@ -93,22 +95,24 @@ export function Contact({ year }: { year: number }) {
       gradientClassName="bg-gradient-to-b from-night via-night/40 to-night"
     >
       <div ref={container} className="relative mx-auto max-w-4xl text-center">
-        {show3D ? (
-          <div className="phone-booth-scene-wrap">
-            <div className="phone-booth-scene-canvas" aria-hidden>
-              <PhoneBoothScene onActivate={focusEmailCta} />
+        <div ref={boothHostRef}>
+          {show3D && boothNear ? (
+            <div className="phone-booth-scene-wrap">
+              <div className="phone-booth-scene-canvas" aria-hidden>
+                <PhoneBoothScene onActivate={focusEmailCta} />
+              </div>
+              <button
+                type="button"
+                className="phone-booth-activate"
+                onClick={focusEmailCta}
+              >
+                Call booth — focus email CTA
+              </button>
             </div>
-            <button
-              type="button"
-              className="phone-booth-activate"
-              onClick={focusEmailCta}
-            >
-              Call booth — focus email CTA
-            </button>
-          </div>
-        ) : (
-          <PhoneBoothFallback />
-        )}
+          ) : (
+            <PhoneBoothFallback />
+          )}
+        </div>
 
         <p className="contact-title gta-title text-5xl sm:text-6xl md:text-8xl text-blood mb-6">
           Wasted?

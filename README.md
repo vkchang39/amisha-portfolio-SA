@@ -69,9 +69,8 @@ no analytics — by design.
 
 Pushes to `main` run `.github/workflows/deploy-github-pages.yml`:
 
-1. `check` — typecheck, lint, Playwright smoke tests, Lighthouse (desktop hard + mobile warn)
-2. `build` — `next build` with `GITHUB_PAGES=true` (sets `basePath`)
-3. `deploy` — GitHub Pages
+1. `check` — typecheck, lint, **one** `GITHUB_PAGES` build, Playwright, Lighthouse (desktop hard + mobile warn), upload `out/`
+2. `deploy` — download the same `out/` artifact → GitHub Pages (no second build)
 
 Pull requests run only the `check` job.
 

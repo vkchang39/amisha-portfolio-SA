@@ -44,6 +44,15 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # Single static export for e2e, Lighthouse, and (on main) Pages deploy.
+      - name: Build static site
+        run: pnpm run build
+        env:
+          GITHUB_PAGES: "true"
+          NEXT_PUBLIC_FORM_ENDPOINT: ${{ vars.NEXT_PUBLIC_FORM_ENDPOINT }}
+          NEXT_PUBLIC_FORM_ACCESS_KEY: ${{ vars.NEXT_PUBLIC_FORM_ACCESS_KEY }}
+          NEXT_PUBLIC_GOATCOUNTER: ${{ vars.NEXT_PUBLIC_GOATCOUNTER }}
+
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
@@ -51,6 +60,9 @@ jobs:
         run: pnpm test:e2e
         env:
           CI: "true"
+          PLAYWRIGHT_SKIP_BUILD: "true"
+          PLAYWRIGHT_BASE_PATH: /amisha-portfolio-SA
+          NEXT_PUBLIC_BASE_PATH: /amisha-portfolio-SA
 
       - name: Upload Playwright report
         if: failure()
@@ -60,62 +72,47 @@ jobs:
           path: playwright-report
           retention-days: 7
 
-      # Reuses the `out/` folder Playwright just built. Budgets live in lighthouserc.json.
       - name: Lighthouse budgets (desktop)
         run: pnpm lighthouse
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          NEXT_PUBLIC_BASE_PATH: /amisha-portfolio-SA
+          PLAYWRIGHT_BASE_PATH: /amisha-portfolio-SA
 
-      # Warn-only mobile pass — surfaces regressions without failing the job.
       - name: Lighthouse budgets (mobile, warn)
         run: pnpm lighthouse:mobile
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          NEXT_PUBLIC_BASE_PATH: /amisha-portfolio-SA
+          PLAYWRIGHT_BASE_PATH: /amisha-portfolio-SA
 
-  build:
-    needs: check
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Upload static export
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
         with:
-          version: 10
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build static site
-        run: pnpm run build
-        env:
-          GITHUB_PAGES: "true"
-          # Optional integrations — set as repository Variables (Settings → Secrets and variables → Actions).
-          NEXT_PUBLIC_FORM_ENDPOINT: ${{ vars.NEXT_PUBLIC_FORM_ENDPOINT }}
-          NEXT_PUBLIC_FORM_ACCESS_KEY: ${{ vars.NEXT_PUBLIC_FORM_ACCESS_KEY }}
-          NEXT_PUBLIC_GOATCOUNTER: ${{ vars.NEXT_PUBLIC_GOATCOUNTER }}
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
+          name: site-out
           path: out
+          retention-days: 2
 
   deploy:
-    needs: build
+    needs: check
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Download static export
+        uses: actions/download-artifact@v4
+        with:
+          name: site-out
+          path: out
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

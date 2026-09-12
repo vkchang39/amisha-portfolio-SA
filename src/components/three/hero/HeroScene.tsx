@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor, Stars } from "@react-three/drei";
+import { useGameUi } from "@/context/GameUiContext";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { CameraRig, PostEffects } from "./CameraAndPost";
 import { LosSantosSkyline, SuburbBlocks } from "./City";
@@ -17,13 +18,16 @@ import { DepthHaze, Mountains, Sky, Sun } from "./SkyAtmosphere";
  */
 export default function HeroScene({ scrollProgress = 0 }: { scrollProgress?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(true);
+  const [inView, setInView] = useState(true);
+  const [tabVisible, setTabVisible] = useState(true);
   // Flipped by PerformanceMonitor when the device can't hold frame rate: drops
   // post-processing and DPR rather than letting the hero stutter.
   const [degraded, setDegraded] = useState(false);
+  const { pauseOpen, mapOpen } = useGameUi();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const isCoarsePointer = useMediaQuery("(pointer: coarse)");
   const lowQuality = isMobile || isCoarsePointer || degraded;
+  const active = inView && tabVisible && !pauseOpen && !mapOpen;
 
   const dpr: [number, number] = degraded
     ? [1, 1]
@@ -35,11 +39,18 @@ export default function HeroScene({ scrollProgress = 0 }: { scrollProgress?: num
     const node = containerRef.current;
     if (!node) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
+      ([entry]) => setInView(entry.isIntersecting),
       { threshold: 0.05 }
     );
     observer.observe(node);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const onVisibility = () => setTabVisible(document.visibilityState === "visible");
+    onVisibility();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
 
   return (
@@ -51,7 +62,7 @@ export default function HeroScene({ scrollProgress = 0 }: { scrollProgress?: num
           powerPreference: lowQuality ? "low-power" : "high-performance",
         }}
         dpr={dpr}
-        frameloop={visible ? "always" : "never"}
+        frameloop={active ? "always" : "never"}
       >
         <PerformanceMonitor
           flipflops={2}
@@ -92,7 +103,7 @@ export default function HeroScene({ scrollProgress = 0 }: { scrollProgress?: num
         <Highway />
 
         <CameraRig enablePointer={!isCoarsePointer} scrollProgress={scrollProgress} />
-        <PostEffects enabled={!lowQuality} />
+        <PostEffects enabled={!lowQuality && active} />
       </Canvas>
       <div className="hero-scene-vignette" aria-hidden />
     </div>

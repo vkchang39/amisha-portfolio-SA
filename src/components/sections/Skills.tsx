@@ -10,6 +10,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { getSectionAccent } from "@/lib/sectionAccents";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useCinematicMotion } from "@/hooks/useCinematicMotion";
+import { useNearViewport } from "@/hooks/useNearViewport";
 
 const StatsPillarsScene = dynamic(
   () => import("@/components/three/StatsPillarsScene"),
@@ -41,6 +42,7 @@ export function Skills() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { cinematicEnabled } = useCinematicMotion();
   const show3D = cinematicEnabled && !isMobile;
+  const [pillarsHostRef, pillarsNear] = useNearViewport<HTMLDivElement>();
 
   if (!data) return null;
 
@@ -68,13 +70,15 @@ export function Skills() {
           </p>
         </div>
 
-        {show3D ? (
-          <StatsPillarsScene skills={data.skills} />
-        ) : (
-          <StatsPillarsFallback
-            skills={data.skills.map((s) => ({ label: s.label, value: s.value }))}
-          />
-        )}
+        <div ref={pillarsHostRef}>
+          {show3D && pillarsNear ? (
+            <StatsPillarsScene skills={data.skills} />
+          ) : (
+            <StatsPillarsFallback
+              skills={data.skills.map((s) => ({ label: s.label, value: s.value }))}
+            />
+          )}
+        </div>
 
         <div className="grid gap-x-10 gap-y-8 md:gap-x-16 md:gap-y-10 md:grid-cols-2 mt-8">
           {data.skills.map((skill, i) => (

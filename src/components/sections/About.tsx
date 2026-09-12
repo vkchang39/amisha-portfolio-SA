@@ -89,7 +89,6 @@ export function About() {
                   alt="Amisha Sharma — GTA San Andreas style portrait art"
                   width={819}
                   height={546}
-                  priority
                   className="w-full h-auto object-cover sepia-[0.25] contrast-[1.05] transition-transform duration-500 group-hover:scale-[1.04]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-night/70 via-transparent to-transparent" />
